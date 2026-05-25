@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getProduct } from "@/lib/products";
-
-export const runtime = "edge";
+import { createClient } from "@/lib/supabase/server";
 
 const MODEL_MAP: Record<string, string> = {
   fast: "anthropic/claude-3.5-haiku",
@@ -16,6 +15,13 @@ export async function POST(req: NextRequest) {
     const product = getProduct(slug);
     if (!product) {
       return NextResponse.json({ error: "Product not found" }, { status: 404 });
+    }
+
+    // Check auth
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
     }
 
     const apiKey = process.env.OPENROUTER_API_KEY;
@@ -61,6 +67,16 @@ export async function POST(req: NextRequest) {
 
     const data = await res.json();
     const result = data?.choices?.[0]?.message?.content || "(no content)";
+
+    // Save to database
+    await supabase.from("generations").insert({
+      user_id: user.id,
+      product_slug: slug,
+      inputs,
+      result,
+      model: modelId,
+    });
+
     return NextResponse.json({ result, model: modelId });
   } catch (e: any) {
     return NextResponse.json(
