@@ -3,9 +3,16 @@ import { getProduct } from "@/lib/products";
 
 export const runtime = "edge";
 
+const MODEL_MAP: Record<string, string> = {
+  fast: "anthropic/claude-3.5-haiku",
+  balanced: "google/gemini-2.0-flash-001",
+  premium: "anthropic/claude-sonnet-4",
+  ultra: "anthropic/claude-opus-4",
+};
+
 export async function POST(req: NextRequest) {
   try {
-    const { slug, inputs } = await req.json();
+    const { slug, inputs, model } = await req.json();
     const product = getProduct(slug);
     if (!product) {
       return NextResponse.json({ error: "Product not found" }, { status: 404 });
@@ -18,6 +25,8 @@ export async function POST(req: NextRequest) {
         { status: 500 }
       );
     }
+
+    const modelId = MODEL_MAP[model] || MODEL_MAP.fast;
 
     const userMessage = product.fields
       .map((f) => `${f.label}: ${inputs?.[f.id] || "(not provided)"}`)
@@ -32,27 +41,27 @@ export async function POST(req: NextRequest) {
         "X-Title": "Verdhana AI",
       },
       body: JSON.stringify({
-        model: "anthropic/claude-3.5-haiku",
+        model: modelId,
         messages: [
           { role: "system", content: product.systemPrompt },
           { role: "user", content: userMessage },
         ],
-        temperature: 0.8,
-        max_tokens: 1500,
+        temperature: 0.85,
+        max_tokens: 1800,
       }),
     });
 
     if (!res.ok) {
       const errText = await res.text();
       return NextResponse.json(
-        { error: `AI provider error: ${errText.slice(0, 200)}` },
+        { error: `AI provider error: ${errText.slice(0, 300)}` },
         { status: 500 }
       );
     }
 
     const data = await res.json();
     const result = data?.choices?.[0]?.message?.content || "(no content)";
-    return NextResponse.json({ result });
+    return NextResponse.json({ result, model: modelId });
   } catch (e: any) {
     return NextResponse.json(
       { error: e.message || "Unknown error" },

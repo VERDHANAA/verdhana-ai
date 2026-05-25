@@ -4,10 +4,38 @@ import { useState } from "react";
 import { useParams, notFound } from "next/navigation";
 import { getProduct } from "@/lib/products";
 
+const MODELS = [
+  {
+    id: "fast",
+    name: "Fast",
+    desc: "Quick & cheap. Best for drafts.",
+    badge: "Free",
+  },
+  {
+    id: "balanced",
+    name: "Balanced",
+    desc: "Better quality. Still fast.",
+    badge: "Free",
+  },
+  {
+    id: "premium",
+    name: "Premium",
+    desc: "Most natural output. Recommended.",
+    badge: "Pro",
+  },
+  {
+    id: "ultra",
+    name: "Ultra",
+    desc: "Highest quality. Slower.",
+    badge: "Pro",
+  },
+];
+
 export default function ProductPage() {
   const params = useParams<{ slug: string }>();
   const product = getProduct(params.slug);
   const [inputs, setInputs] = useState<Record<string, string>>({});
+  const [model, setModel] = useState("fast");
   const [result, setResult] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -22,7 +50,7 @@ export default function ProductPage() {
       const res = await fetch("/api/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ slug: product.slug, inputs }),
+        body: JSON.stringify({ slug: product.slug, inputs, model }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Failed");
@@ -37,7 +65,9 @@ export default function ProductPage() {
   return (
     <div className="p-6 md:p-10 max-w-5xl">
       <div className="flex items-center gap-3 mb-6">
-        <span className="text-4xl">{product.emoji}</span>
+        <span className="text-sm font-mono px-2 py-1 rounded bg-zinc-100 border border-zinc-200">
+          {product.emoji}
+        </span>
         <div>
           <h1 className="text-2xl md:text-3xl font-bold">{product.name}</h1>
           <p className="text-zinc-600 text-sm">{product.description}</p>
@@ -75,6 +105,40 @@ export default function ProductPage() {
                 )}
               </div>
             ))}
+
+            {/* Model selector */}
+            <div>
+              <label className="block text-sm font-medium mb-2">AI Model</label>
+              <div className="grid grid-cols-2 gap-2">
+                {MODELS.map((m) => (
+                  <button
+                    key={m.id}
+                    type="button"
+                    onClick={() => setModel(m.id)}
+                    className={`text-left p-3 rounded-lg border transition ${
+                      model === m.id
+                        ? "border-violet-500 bg-violet-50"
+                        : "border-zinc-200 hover:border-zinc-300"
+                    }`}
+                  >
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="font-medium text-sm">{m.name}</span>
+                      <span
+                        className={`text-[10px] px-1.5 py-0.5 rounded ${
+                          m.badge === "Pro"
+                            ? "bg-zinc-900 text-white"
+                            : "bg-emerald-100 text-emerald-700"
+                        }`}
+                      >
+                        {m.badge}
+                      </span>
+                    </div>
+                    <p className="text-xs text-zinc-600">{m.desc}</p>
+                  </button>
+                ))}
+              </div>
+            </div>
+
             <button
               onClick={handleGenerate}
               disabled={loading}
