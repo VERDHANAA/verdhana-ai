@@ -8,7 +8,7 @@ export async function GET() {
   try {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
-    if (!user || user.email !== ADMIN_EMAIL) {
+    if (!user || user.email?.toLowerCase().trim() !== ADMIN_EMAIL.toLowerCase().trim()) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
