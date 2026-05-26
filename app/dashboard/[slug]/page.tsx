@@ -32,6 +32,8 @@ export default function ProductPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [usage, setUsage] = useState<Usage | null>(null);
+  const [emailSending, setEmailSending] = useState(false);
+  const [emailSent, setEmailSent] = useState(false);
 
   const refreshUsage = () => {
     fetch("/api/usage")
@@ -49,6 +51,7 @@ export default function ProductPage() {
     setResult("");
     setScore(null);
     setEdited(false);
+    setEmailSent(false);
     try {
       const res = await fetch("/api/generate", {
         method: "POST",
@@ -65,6 +68,28 @@ export default function ProductPage() {
       setError(e.message);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleEmailResult = async () => {
+    if (!result) return;
+    setEmailSending(true);
+    try {
+      const res = await fetch("/api/email/send-result", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ slug: product.slug, result }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setEmailSent(true);
+      } else {
+        setError(data.error || "Email failed");
+      }
+    } catch (e: any) {
+      setError(e.message);
+    } finally {
+      setEmailSending(false);
     }
   };
 
@@ -160,7 +185,6 @@ export default function ProductPage() {
               </div>
             </div>
 
-            {/* Polish toggle */}
             <div className={`p-3 rounded-lg border ${polish ? "border-violet-500 bg-violet-50" : "border-zinc-200"}`}>
               <label className="flex items-start gap-3 cursor-pointer">
                 <input
@@ -203,7 +227,7 @@ export default function ProductPage() {
         </div>
 
         <div className="bg-white rounded-2xl border border-zinc-200 p-6">
-          <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
             <h2 className="font-semibold">Result</h2>
             {score !== null && (
               <span className={`text-xs px-2 py-1 rounded font-medium ${
@@ -214,9 +238,22 @@ export default function ProductPage() {
             )}
           </div>
           {result ? (
-            <pre className="whitespace-pre-wrap text-sm font-sans leading-relaxed">
-              {result}
-            </pre>
+            <>
+              <pre className="whitespace-pre-wrap text-sm font-sans leading-relaxed mb-4">
+                {result}
+              </pre>
+              <button
+                onClick={handleEmailResult}
+                disabled={emailSending || emailSent}
+                className="w-full py-2 rounded-lg border border-zinc-300 bg-white text-sm font-medium hover:bg-zinc-50 disabled:opacity-50"
+              >
+                {emailSending
+                  ? "Sending..."
+                  : emailSent
+                  ? "✓ Sent to your email"
+                  : "Send to my email"}
+              </button>
+            </>
           ) : (
             <p className="text-sm text-zinc-500">
               Your generated content will appear here.

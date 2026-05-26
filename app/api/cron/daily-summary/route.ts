@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createServiceClient } from "@/lib/supabase/service";
+import { sendEmail, adminDailyReportHtml } from "@/lib/emails";
 
 export async function GET(req: NextRequest) {
-  // Verify cron secret (Vercel sets this automatically)
   const authHeader = req.headers.get("authorization");
   if (process.env.CRON_SECRET && authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -11,7 +11,6 @@ export async function GET(req: NextRequest) {
   try {
     const supabase = createServiceClient();
 
-    // Yesterday's date range (UTC)
     const now = new Date();
     const yesterday = new Date(now);
     yesterday.setUTCDate(yesterday.getUTCDate() - 1);
@@ -22,14 +21,12 @@ export async function GET(req: NextRequest) {
 
     const dateStr = yesterday.toISOString().split("T")[0];
 
-    // Count generations yesterday
     const { count: totalGen } = await supabase
       .from("generations")
       .select("id", { count: "exact", head: true })
       .gte("created_at", yesterday.toISOString())
       .lt("created_at", today.toISOString());
 
-    // Count polished yesterday
     const { count: polished } = await supabase
       .from("generations")
       .select("id", { count: "exact", head: true })
@@ -37,7 +34,6 @@ export async function GET(req: NextRequest) {
       .gte("created_at", yesterday.toISOString())
       .lt("created_at", today.toISOString());
 
-    // Average quality score
     const { data: scoreRows } = await supabase
       .from("generations")
       .select("quality_score")
@@ -49,29 +45,36 @@ export async function GET(req: NextRequest) {
       ? scoreRows.reduce((sum, r) => sum + (r.quality_score || 0), 0) / scoreRows.length
       : null;
 
-    // Count users (total + new)
     const { count: totalUsers } = await supabase
       .from("generations")
       .select("user_id", { count: "exact", head: true });
 
-    // Upsert summary
+    const stats = {
+      date: dateStr,
+      total_users: totalUsers || 0,
+      new_users: 0,
+      total_generations: totalGen || 0,
+      total_polished: polished || 0,
+      avg_quality_score: avgScore,
+      errors: 0,
+    };
+
     const { error } = await supabase
       .from("daily_summaries")
-      .upsert(
-        {
-          date: dateStr,
-          total_users: totalUsers || 0,
-          new_users: 0, // computed below
-          total_generations: totalGen || 0,
-          total_polished: polished || 0,
-          avg_quality_score: avgScore,
-          errors: 0,
-        },
-        { onConflict: "date" }
-      );
+      .upsert(stats, { onConflict: "date" });
 
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+
+    // Send admin email
+    const adminEmail = process.env.ADMIN_EMAIL;
+    if (adminEmail) {
+      await sendEmail({
+        to: adminEmail,
+        subject: `Verdhana AI Daily Report — ${dateStr}`,
+        html: adminDailyReportHtml(stats),
+      });
     }
 
     return NextResponse.json({
@@ -82,6 +85,7 @@ export async function GET(req: NextRequest) {
         total_polished: polished,
         avg_quality_score: avgScore,
       },
+      email_sent: !!adminEmail,
     });
   } catch (e: any) {
     return NextResponse.json({ error: e.message }, { status: 500 });

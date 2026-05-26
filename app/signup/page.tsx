@@ -18,11 +18,16 @@ export default function SignupPage() {
     setLoading(true);
     setError("");
     const { error } = await supabase.auth.signUp({ email, password });
-    setLoading(false);
     if (error) {
+      setLoading(false);
       setError(error.message);
       return;
     }
+
+    // Send welcome email (fire and forget, don't block signup)
+    fetch("/api/email/welcome", { method: "POST" }).catch(() => {});
+
+    setLoading(false);
     router.push("/dashboard");
     router.refresh();
   };
@@ -35,8 +40,8 @@ export default function SignupPage() {
           Verdhana AI
         </Link>
         <div className="bg-white rounded-2xl border border-zinc-200 p-8 shadow-sm">
-          <h1 className="text-2xl font-bold mb-1">Create your account</h1>
-          <p className="text-sm text-zinc-600 mb-6">Free forever. No card required.</p>
+          <h1 className="text-2xl font-bold mb-1">Create account</h1>
+          <p className="text-sm text-zinc-600 mb-6">Get started with Verdhana AI</p>
           <form onSubmit={handleSignup} className="space-y-4">
             <div>
               <label className="block text-sm font-medium mb-1">Email</label>
@@ -65,7 +70,7 @@ export default function SignupPage() {
             <button
               type="submit"
               disabled={loading}
-              className="block text-center w-full py-2 rounded-lg bg-gradient-to-r from-violet-600 to-blue-600 text-white font-medium hover:opacity-90 disabled:opacity-50"
+              className="block text-center w-full py-2 rounded-lg bg-black text-white font-medium hover:bg-zinc-800 disabled:opacity-50"
             >
               {loading ? "Creating..." : "Create account"}
             </button>
