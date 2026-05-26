@@ -16,7 +16,7 @@ export async function sendEmail({ to, subject, html, from }: EmailParams) {
     return { success: false, error: "Email service not configured" };
   }
 
-  const sender = from || "Verdhana AI <onboarding@resend.dev>";
+  const sender = from || "Verdhana AI <hello@verdhanaai.com>";
 
   try {
     const res = await fetch(RESEND_URL, {
