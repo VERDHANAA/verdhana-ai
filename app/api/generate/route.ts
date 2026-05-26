@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { getProduct } from "@/lib/products";
 import { createClient } from "@/lib/supabase/server";
 
+const DAILY_LIMIT = 10;
+
 const MODEL_MAP: Record<string, string> = {
   fast: "anthropic/claude-3.5-haiku",
   balanced: "google/gemini-2.0-flash-001",
@@ -17,23 +19,57 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Product not found" }, { status: 404 });
     }
 
-    // Check auth
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
       return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
     }
 
-    const apiKey = process.env.OPENROUTER_API_KEY;
-    if (!apiKey) {
+    // Free user: lock to Fast model only
+    const requestedModel = model || "fast";
+    if (requestedModel !== "fast") {
       return NextResponse.json(
-        { error: "Server not configured. Add OPENROUTER_API_KEY." },
+        { error: "This model requires a Pro plan. Upgrade to access Balanced, Premium, and Ultra models." },
+        { status: 403 }
+      );
+    }
+
+    // Count today's generations
+    const startOfDay = new Date();
+    startOfDay.setHours(0, 0, 0, 0);
+
+    const { count, error: countError } = await supabase
+      .from("generations")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", user.id)
+      .gte("created_at", startOfDay.toISOString());
+
+    if (countError) {
+      return NextResponse.json(
+        { error: "Could not check usage" },
         { status: 500 }
       );
     }
 
-    const modelId = MODEL_MAP[model] || MODEL_MAP.fast;
+    if ((count || 0) >= DAILY_LIMIT) {
+      return NextResponse.json(
+        {
+          error: `Daily limit reached (${DAILY_LIMIT} generations). Resets at midnight.`,
+          limitReached: true,
+        },
+        { status: 429 }
+      );
+    }
 
+    const apiKey = process.env.OPENROUTER_API_KEY;
+    if (!apiKey) {
+      return NextResponse.json(
+        { error: "Server not configured." },
+        { status: 500 }
+      );
+    }
+
+    const modelId = MODEL_MAP[requestedModel];
     const userMessage = product.fields
       .map((f) => `${f.label}: ${inputs?.[f.id] || "(not provided)"}`)
       .join("\n");
@@ -68,7 +104,6 @@ export async function POST(req: NextRequest) {
     const data = await res.json();
     const result = data?.choices?.[0]?.message?.content || "(no content)";
 
-    // Save to database
     await supabase.from("generations").insert({
       user_id: user.id,
       product_slug: slug,
@@ -77,7 +112,11 @@ export async function POST(req: NextRequest) {
       model: modelId,
     });
 
-    return NextResponse.json({ result, model: modelId });
+    return NextResponse.json({
+      result,
+      model: modelId,
+      remaining: DAILY_LIMIT - ((count || 0) + 1),
+    });
   } catch (e: any) {
     return NextResponse.json(
       { error: e.message || "Unknown error" },
