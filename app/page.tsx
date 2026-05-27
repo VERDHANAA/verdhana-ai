@@ -38,7 +38,7 @@ export default function HomePage() {
             <div className="flex w-full border-2 border-neo-light bg-neo-dark neo-btn rounded-none">
               <input
                 type="text"
-                placeholder="Search tools..."
+                placeholder="Cari tools..."
                 className="flex-1 bg-transparent text-neo-light placeholder-neo-gray text-sm px-3 py-2 outline-none"
               />
               <button className="px-3 py-2 bg-neo-orange text-neo-light border-l-2 border-neo-light text-sm font-bold">
@@ -53,13 +53,13 @@ export default function HomePage() {
               href="/login"
               className="text-neo-light text-sm font-bold hover:text-neo-teal transition-colors px-3 py-1.5"
             >
-              Sign in
+              Masuk
             </Link>
             <Link
               href="/signup"
               className="neo-btn bg-neo-orange text-neo-light text-sm px-4 py-2 rounded-none inline-block"
             >
-              Get started →
+              Mulai sekarang →
             </Link>
           </div>
         </div>
@@ -116,23 +116,23 @@ export default function HomePage() {
 
         <div className="max-w-4xl mx-auto relative">
           <div className="inline-flex items-center gap-2 px-3 py-1 border-2 border-neo-dark bg-neo-dark text-neo-teal text-xs font-black uppercase tracking-widest mb-6 shadow-brutal-sm">
-            ✦ 12 AI specialists, one platform
+            ✦ 12 spesialis AI, satu platform
           </div>
 
           <h1 className="text-5xl md:text-7xl font-black tracking-tight leading-none text-neo-dark mb-4">
-            High-converting<br />
+            Copy marketing<br />
             <span
               className="inline-block bg-neo-dark text-neo-teal px-2"
               style={{ WebkitTextStroke: "1px #1C1C1E" }}
             >
-              copy
+              terbaik
             </span>{" "}
-            in seconds.
+            dalam detik.
           </h1>
 
           <p className="mt-6 text-lg md:text-xl text-neo-dark font-medium max-w-xl border-l-4 border-neo-dark pl-4">
-            12 specialized AI agents that write ads, headlines, emails, and copy —
-            working 24/7 so you can focus on growth.
+            12 agen AI khusus yang menulis iklan, headline, email, dan copy —
+            bekerja 24/7 agar kamu bisa fokus pada pertumbuhan bisnis.
           </p>
 
           <div className="mt-10 flex flex-col sm:flex-row gap-4">
@@ -140,13 +140,13 @@ export default function HomePage() {
               href="/signup"
               className="neo-btn bg-neo-dark text-neo-light px-8 py-4 text-base font-black uppercase tracking-wide inline-block text-center rounded-none"
             >
-              Explore tools
+              Jelajahi tools
             </Link>
             <Link
               href="/dashboard"
               className="neo-btn bg-neo-light text-neo-dark px-8 py-4 text-base font-black uppercase tracking-wide inline-block text-center rounded-none"
             >
-              See demo →
+              Lihat demo →
             </Link>
           </div>
         </div>
@@ -160,11 +160,11 @@ export default function HomePage() {
               TOOLS
             </div>
             <h2 className="text-3xl md:text-4xl font-black text-neo-dark leading-none">
-              Meet your 12 AI specialists
+              Kenali 12 spesialis AI kamu
             </h2>
           </div>
           <p className="text-neo-gray font-medium max-w-xs">
-            Each one trained for a specific marketing task. No generic outputs.
+            Masing-masing dirancang untuk tugas marketing tertentu. Tanpa output generik.
           </p>
         </div>
 
@@ -207,7 +207,7 @@ export default function HomePage() {
                   <span className="w-6 h-1.5 bg-neo-dark opacity-20 inline-block" />
                 </div>
                 <span className="text-xs font-black text-neo-dark group-hover:translate-x-1 transition-transform">
-                  USE →
+                  PAKAI →
                 </span>
               </div>
             </Link>
@@ -220,10 +220,10 @@ export default function HomePage() {
         <div className="neo-card bg-neo-orange p-8 md:p-12 flex flex-col md:flex-row items-center justify-between gap-6">
           <div>
             <h2 className="text-3xl md:text-4xl font-black text-neo-light leading-tight">
-              Stop staring at blank pages.
+              Berhenti menatap halaman kosong.
             </h2>
             <p className="mt-2 text-neo-light font-medium opacity-90">
-              High-quality marketing copy in seconds. Free to start.
+              Copy marketing berkualitas tinggi dalam hitungan detik. Gratis untuk memulai.
             </p>
           </div>
           <Link
@@ -231,7 +231,7 @@ export default function HomePage() {
             className="neo-btn bg-neo-dark text-neo-light px-8 py-4 text-base font-black uppercase tracking-wide inline-block whitespace-nowrap rounded-none"
             style={{ boxShadow: "4px 4px 0px #F0F0F0" }}
           >
-            Create free account →
+            Buat akun gratis →
           </Link>
         </div>
       </section>
@@ -247,14 +247,14 @@ export default function HomePage() {
             <span className="text-neo-light font-black text-sm">Verdhana AI</span>
           </div>
           <p className="text-neo-gray text-sm font-medium">
-            © {new Date().getFullYear()} Verdhana AI. Built for marketers worldwide.
+            © {new Date().getFullYear()} Verdhana AI. Dibuat untuk para marketer di seluruh dunia.
           </p>
           <div className="flex gap-4">
             <Link href="/login" className="text-neo-gray text-sm font-medium hover:text-neo-teal transition-colors">
-              Sign in
+              Masuk
             </Link>
             <Link href="/signup" className="text-neo-gray text-sm font-medium hover:text-neo-teal transition-colors">
-              Sign up
+              Daftar
             </Link>
           </div>
         </div>
