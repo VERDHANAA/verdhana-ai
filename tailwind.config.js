@@ -7,12 +7,20 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        brand: {
-          50: "#f5f3ff",
-          500: "#8b5cf6",
-          600: "#7c3aed",
-          700: "#6d28d9",
+        neo: {
+          teal: "#00BFAE",
+          orange: "#FF3D00",
+          gray: "#7D7F7D",
+          light: "#F0F0F0",
+          dark: "#1C1C1E",
         },
+      },
+      boxShadow: {
+        brutal: "4px 4px 0px #1C1C1E",
+        "brutal-lg": "6px 6px 0px #1C1C1E",
+        "brutal-sm": "2px 2px 0px #1C1C1E",
+        "brutal-orange": "4px 4px 0px #FF3D00",
+        "brutal-teal": "4px 4px 0px #00BFAE",
       },
     },
   },

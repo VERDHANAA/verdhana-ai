@@ -3,14 +3,47 @@
 @tailwind utilities;
 
 :root {
-  --bg: 250 250 252;
-  --fg: 17 17 23;
+  --neo-teal: #00BFAE;
+  --neo-orange: #FF3D00;
+  --neo-gray: #7D7F7D;
+  --neo-light: #F0F0F0;
+  --neo-dark: #1C1C1E;
 }
 
 html, body {
-  background: rgb(var(--bg));
-  color: rgb(var(--fg));
+  background: var(--neo-light);
+  color: var(--neo-dark);
   -webkit-font-smoothing: antialiased;
+  font-family: system-ui, -apple-system, sans-serif;
 }
 
 * { box-sizing: border-box; }
+
+.neo-card {
+  border: 2px solid #1C1C1E;
+  box-shadow: 4px 4px 0px #1C1C1E;
+  transition: box-shadow 0.1s ease, transform 0.1s ease;
+}
+
+.neo-card:hover {
+  box-shadow: 6px 6px 0px #1C1C1E;
+  transform: translate(-1px, -1px);
+}
+
+.neo-btn {
+  border: 2px solid #1C1C1E;
+  box-shadow: 4px 4px 0px #1C1C1E;
+  transition: box-shadow 0.1s ease, transform 0.1s ease;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.neo-btn:hover {
+  box-shadow: 2px 2px 0px #1C1C1E;
+  transform: translate(2px, 2px);
+}
+
+.neo-btn:active {
+  box-shadow: 0px 0px 0px #1C1C1E;
+  transform: translate(4px, 4px);
+}
