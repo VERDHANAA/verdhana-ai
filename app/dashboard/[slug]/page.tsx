@@ -5,53 +5,49 @@ import { useParams, notFound } from "next/navigation";
 import { getProduct } from "@/lib/products";
 
 const MODELS = [
-  { id: "fast", name: "Fast", desc: "Quick & cheap. Best for drafts.", badge: "Free", locked: false },
-  { id: "balanced", name: "Balanced", desc: "Better quality.", badge: "Pro", locked: true },
-  { id: "premium", name: "Premium", desc: "Most natural.", badge: "Pro", locked: true },
-  { id: "ultra", name: "Ultra", desc: "Highest quality.", badge: "Pro", locked: true },
+  { id: "fast",     name: "FAST",     speed: "~3 SEC",  badge: null,  locked: false },
+  { id: "balanced", name: "BALANCED", speed: "~8 SEC",  badge: "PRO", locked: true  },
+  { id: "premium",  name: "PREMIUM",  speed: "~15 SEC", badge: "PRO", locked: true  },
+  { id: "ultra",    name: "ULTRA",    speed: "~30 SEC", badge: "PRO", locked: true  },
 ];
 
 type Usage = {
-  used: number;
-  limit: number;
-  remaining: number;
-  polishUsed: number;
-  polishLimit: number;
-  polishRemaining: number;
+  used: number; limit: number; remaining: number;
+  polishUsed: number; polishLimit: number; polishRemaining: number;
 };
 
 export default function ProductPage() {
   const params = useParams<{ slug: string }>();
   const product = getProduct(params.slug);
-  const [inputs, setInputs] = useState<Record<string, string>>({});
-  const [model, setModel] = useState("fast");
-  const [polish, setPolish] = useState(false);
-  const [result, setResult] = useState("");
-  const [score, setScore] = useState<number | null>(null);
-  const [edited, setEdited] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [usage, setUsage] = useState<Usage | null>(null);
+  const [inputs, setInputs]         = useState<Record<string, string>>({});
+  const [model, setModel]           = useState("fast");
+  const [polish, setPolish]         = useState(false);
+  const [result, setResult]         = useState("");
+  const [score, setScore]           = useState<number | null>(null);
+  const [edited, setEdited]         = useState(false);
+  const [loading, setLoading]       = useState(false);
+  const [error, setError]           = useState("");
+  const [usage, setUsage]           = useState<Usage | null>(null);
   const [emailSending, setEmailSending] = useState(false);
-  const [emailSent, setEmailSent] = useState(false);
+  const [emailSent, setEmailSent]   = useState(false);
+  const [copied, setCopied]         = useState(false);
 
   const refreshUsage = () => {
     fetch("/api/usage")
-      .then((r) => r.json())
-      .then((d) => { if (!d.error) setUsage(d); });
+      .then(r => r.json())
+      .then(d => { if (!d.error) setUsage(d); });
   };
 
   useEffect(() => { refreshUsage(); }, []);
 
   if (!product) return notFound();
 
+  const limitReached    = usage ? usage.remaining <= 0 : false;
+  const polishAvailable = usage ? usage.polishRemaining > 0 : false;
+
   const handleGenerate = async () => {
-    setLoading(true);
-    setError("");
-    setResult("");
-    setScore(null);
-    setEdited(false);
-    setEmailSent(false);
+    setLoading(true); setError(""); setResult(""); setScore(null);
+    setEdited(false); setEmailSent(false);
     try {
       const res = await fetch("/api/generate", {
         method: "POST",
@@ -64,14 +60,14 @@ export default function ProductPage() {
       if (typeof data.score === "number") setScore(data.score);
       setEdited(!!data.edited);
       refreshUsage();
-    } catch (e: any) {
-      setError(e.message);
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : "Unknown error");
     } finally {
       setLoading(false);
     }
   };
 
-  const handleEmailResult = async () => {
+  const handleEmail = async () => {
     if (!result) return;
     setEmailSending(true);
     try {
@@ -81,183 +77,339 @@ export default function ProductPage() {
         body: JSON.stringify({ slug: product.slug, result }),
       });
       const data = await res.json();
-      if (res.ok) {
-        setEmailSent(true);
-      } else {
-        setError(data.error || "Email failed");
-      }
-    } catch (e: any) {
-      setError(e.message);
+      if (res.ok) setEmailSent(true);
+      else setError(data.error || "Email failed");
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : "Unknown error");
     } finally {
       setEmailSending(false);
     }
   };
 
-  const limitReached = usage ? usage.remaining <= 0 : false;
-  const polishAvailable = usage ? usage.polishRemaining > 0 : false;
+  const handleCopy = () => {
+    navigator.clipboard.writeText(result).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  };
 
   return (
-    <div className="p-6 md:p-10 max-w-5xl">
-      <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
-        <div className="flex items-center gap-3">
-          <span className="text-sm font-mono px-2 py-1 rounded bg-zinc-100 border border-zinc-200">
-            {product.emoji}
-          </span>
-          <div>
-            <h1 className="text-2xl md:text-3xl font-bold">{product.name}</h1>
-            <p className="text-zinc-600 text-sm">{product.description}</p>
-          </div>
-        </div>
-        {usage && (
-          <div className={`px-3 py-2 rounded-lg text-sm font-medium border ${
-            limitReached
-              ? "bg-red-50 border-red-200 text-red-700"
-              : usage.remaining <= 2
-              ? "bg-amber-50 border-amber-200 text-amber-700"
-              : "bg-emerald-50 border-emerald-200 text-emerald-700"
-          }`}>
-            {usage.remaining}/{usage.limit} left today
-          </div>
-        )}
+    <div style={{ padding: "24px 32px", maxWidth: 900 }}>
+
+      {/* ── TITLE BLOCK ── */}
+      <div className="form-title-blk" style={{ marginBottom: 16 }}>
+        <div className="form-spec-tag">{product.emoji} — SPECIALIST MODE</div>
+        <div className="form-main-ttl">{product.name.toUpperCase()}</div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-white rounded-2xl border border-zinc-200 p-6">
-          <h2 className="font-semibold mb-4">Input</h2>
-          <div className="space-y-4">
-            {product.fields.map((f) => (
+      {/* ── QUOTA + INFO ROW ── */}
+      <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 20, flexWrap: "wrap" }}>
+        {usage && (
+          <div className="mono-badge" style={{
+            background: limitReached ? "var(--ora)" : usage.remaining <= 2 ? "#FFB300" : "var(--teal)",
+          }}>
+            {usage.remaining}/{usage.limit} LEFT TODAY
+          </div>
+        )}
+        <div style={{
+          fontFamily: "'Space Mono', monospace",
+          fontSize: 10,
+          color: "var(--con)",
+          textTransform: "uppercase",
+          letterSpacing: 1,
+        }}>
+          MODEL: {model.toUpperCase()}
+        </div>
+        <div style={{
+          fontFamily: "'Lexend', sans-serif",
+          fontSize: 12,
+          color: "var(--con)",
+          marginLeft: "auto",
+        }}>
+          {product.description}
+        </div>
+      </div>
+
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
+
+        {/* ── LEFT: INPUT ── */}
+        <div style={{
+          background: "var(--wht)",
+          border: "var(--b3)",
+          boxShadow: "var(--sh)",
+          padding: "20px",
+        }}>
+          <div style={{
+            fontFamily: "'Space Grotesk', sans-serif",
+            fontSize: 9,
+            fontWeight: 700,
+            textTransform: "uppercase",
+            letterSpacing: 3,
+            color: "var(--con)",
+            marginBottom: 16,
+            paddingBottom: 10,
+            borderBottom: "2px solid var(--bg)",
+          }}>INPUT ///</div>
+
+          <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+            {product.fields.map(f => (
               <div key={f.id}>
-                <label className="block text-sm font-medium mb-1">{f.label}</label>
+                <label className="field-label" style={{ display: "block", marginBottom: 5 }}>
+                  {f.label}
+                </label>
                 {f.type === "textarea" ? (
                   <textarea
+                    className="brutal-textarea"
                     rows={4}
                     placeholder={f.placeholder}
                     value={inputs[f.id] || ""}
-                    onChange={(e) => setInputs({ ...inputs, [f.id]: e.target.value })}
-                    className="w-full px-3 py-2 border border-zinc-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500"
+                    onChange={e => setInputs({ ...inputs, [f.id]: e.target.value })}
                   />
                 ) : (
                   <input
                     type="text"
+                    className="brutal-input"
                     placeholder={f.placeholder}
                     value={inputs[f.id] || ""}
-                    onChange={(e) => setInputs({ ...inputs, [f.id]: e.target.value })}
-                    className="w-full px-3 py-2 border border-zinc-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500"
+                    onChange={e => setInputs({ ...inputs, [f.id]: e.target.value })}
                   />
                 )}
               </div>
             ))}
 
+            {/* AI Model Grid */}
             <div>
-              <label className="block text-sm font-medium mb-2">AI Model</label>
-              <div className="grid grid-cols-2 gap-2">
-                {MODELS.map((m) => {
-                  const isSelected = model === m.id;
-                  return (
-                    <button
-                      key={m.id}
-                      type="button"
-                      disabled={m.locked}
-                      onClick={() => !m.locked && setModel(m.id)}
-                      className={`text-left p-3 rounded-lg border transition ${
-                        m.locked
-                          ? "border-zinc-200 bg-zinc-50 opacity-60 cursor-not-allowed"
-                          : isSelected
-                          ? "border-violet-500 bg-violet-50"
-                          : "border-zinc-200 hover:border-zinc-300"
-                      }`}
-                    >
-                      <div className="flex items-center justify-between mb-1">
-                        <span className="font-medium text-sm">{m.name}</span>
-                        <span className={`text-[10px] px-1.5 py-0.5 rounded ${
-                          m.badge === "Pro" ? "bg-zinc-900 text-white" : "bg-emerald-100 text-emerald-700"
-                        }`}>
-                          {m.badge}
-                        </span>
-                      </div>
-                      <p className="text-xs text-zinc-600">{m.desc}</p>
-                      {m.locked && (
-                        <p className="text-[10px] text-zinc-500 mt-1">Upgrade to unlock</p>
-                      )}
-                    </button>
-                  );
-                })}
+              <div className="field-label" style={{ marginBottom: 8 }}>AI MODEL</div>
+              <div style={{
+                display: "grid",
+                gridTemplateColumns: "1fr 1fr",
+                border: "var(--b3)",
+                boxShadow: "var(--sh-sm)",
+              }}>
+                {MODELS.map((m, i) => (
+                  <div
+                    key={m.id}
+                    className={`model-card${model === m.id ? " active" : ""}`}
+                    onClick={() => !m.locked && setModel(m.id)}
+                    style={{
+                      borderRight:  i % 2 === 0 ? "2px solid var(--ink)" : "none",
+                      borderBottom: i < 2       ? "2px solid var(--ink)" : "none",
+                      opacity: m.locked ? .55 : 1,
+                      cursor: m.locked ? "not-allowed" : "pointer",
+                    }}
+                  >
+                    <div className="mc-name">{m.name}</div>
+                    <div className="mc-speed">{m.speed}</div>
+                    {m.badge && model !== m.id && (
+                      <div className="model-flag pro">{m.badge}</div>
+                    )}
+                    {model === m.id && (
+                      <div className="model-flag on">ON</div>
+                    )}
+                  </div>
+                ))}
               </div>
             </div>
 
-            <div className={`p-3 rounded-lg border ${polish ? "border-violet-500 bg-violet-50" : "border-zinc-200"}`}>
-              <label className="flex items-start gap-3 cursor-pointer">
+            {/* Polish toggle */}
+            <div style={{
+              padding: 12,
+              border: polish ? "var(--b3)" : "2px solid var(--con)",
+              background: polish ? "var(--bg)" : "var(--wht)",
+              boxShadow: polish ? "var(--sh-xs)" : "none",
+            }}>
+              <label style={{ display: "flex", alignItems: "flex-start", gap: 10, cursor: "pointer" }}>
                 <input
                   type="checkbox"
                   checked={polish}
-                  onChange={(e) => setPolish(e.target.checked)}
+                  onChange={e => setPolish(e.target.checked)}
                   disabled={!polishAvailable && !polish}
-                  className="mt-1"
+                  style={{ marginTop: 2, accentColor: "var(--ora)" }}
                 />
-                <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className="font-medium text-sm">AI Pengawas (Polish)</span>
-                    <span className="text-[10px] px-1.5 py-0.5 rounded bg-violet-600 text-white">
-                      Pro feature
-                    </span>
+                <div>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
+                    <span style={{
+                      fontFamily: "'Syne', sans-serif",
+                      fontSize: 12,
+                      fontWeight: 700,
+                      textTransform: "uppercase",
+                    }}>AI POLISH</span>
+                    <span style={{
+                      fontFamily: "'Space Mono', monospace",
+                      fontSize: 8,
+                      fontWeight: 700,
+                      background: "var(--teal)",
+                      color: "var(--ink)",
+                      padding: "2px 6px",
+                      border: "1px solid var(--ink)",
+                      textTransform: "uppercase",
+                    }}>PRO</span>
                   </div>
-                  <p className="text-xs text-zinc-600">
-                    Reviewer scores your copy, Editor refines if below 8/10.
-                  </p>
+                  <div style={{ fontFamily: "'Lexend', sans-serif", fontSize: 11, color: "var(--con)" }}>
+                    Reviewer scores copy, Editor refines if below 8/10.
+                  </div>
                   {usage && (
-                    <p className="text-[11px] text-zinc-500 mt-1">
+                    <div style={{
+                      fontFamily: "'Space Mono', monospace",
+                      fontSize: 9,
+                      color: "var(--con)",
+                      marginTop: 4,
+                    }}>
                       {polishAvailable
                         ? `${usage.polishRemaining}/${usage.polishLimit} free polish today`
-                        : "Free polish used today. Upgrade to Pro for unlimited."}
-                    </p>
+                        : "Free polish used. Upgrade for unlimited."}
+                    </div>
                   )}
                 </div>
               </label>
             </div>
 
+            {/* Generate button */}
             <button
+              className="brutal-btn"
               onClick={handleGenerate}
               disabled={loading || limitReached}
-              className="w-full py-3 rounded-lg bg-gradient-to-r from-violet-600 to-blue-600 text-white font-medium hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
+              style={{ padding: "16px 20px", fontSize: 15, letterSpacing: 2, width: "100%" }}
             >
-              {loading ? "Generating..." : limitReached ? "Daily limit reached" : "Generate"}
+              {loading ? "GENERATING..." : limitReached ? "LIMIT REACHED" : "GENERATE COPY ⚡"}
             </button>
-            {error && <p className="text-sm text-red-600">{error}</p>}
+
+            {error && (
+              <div style={{
+                fontFamily: "'Space Mono', monospace",
+                fontSize: 11,
+                color: "var(--ora)",
+                padding: "8px 12px",
+                border: "2px solid var(--ora)",
+                background: "#FFF5F2",
+              }}>{error}</div>
+            )}
           </div>
         </div>
 
-        <div className="bg-white rounded-2xl border border-zinc-200 p-6">
-          <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
-            <h2 className="font-semibold">Result</h2>
+        {/* ── RIGHT: OUTPUT ── */}
+        <div style={{
+          background: "var(--wht)",
+          border: "var(--b3)",
+          boxShadow: "var(--sh)",
+          padding: "20px",
+          display: "flex",
+          flexDirection: "column",
+        }}>
+          <div style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            marginBottom: 16,
+            paddingBottom: 10,
+            borderBottom: "2px solid var(--bg)",
+          }}>
+            <div style={{
+              fontFamily: "'Space Grotesk', sans-serif",
+              fontSize: 9,
+              fontWeight: 700,
+              textTransform: "uppercase",
+              letterSpacing: 3,
+              color: "var(--con)",
+            }}>OUTPUT ///</div>
             {score !== null && (
-              <span className={`text-xs px-2 py-1 rounded font-medium ${
-                score >= 8 ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-700"
-              }`}>
-                Quality: {score}/10 {edited && "(polished)"}
-              </span>
+              <div style={{
+                fontFamily: "'Space Mono', monospace",
+                fontSize: 10,
+                fontWeight: 700,
+                background: score >= 8 ? "var(--teal)" : "#FFB300",
+                color: "var(--ink)",
+                padding: "3px 10px",
+                border: "var(--b2)",
+                boxShadow: "var(--sh-xs)",
+                textTransform: "uppercase",
+              }}>
+                QUALITY: {score}/10{edited && " (POLISHED)"}
+              </div>
             )}
           </div>
+
           {result ? (
             <>
-              <pre className="whitespace-pre-wrap text-sm font-sans leading-relaxed mb-4">
+              <pre style={{
+                fontFamily: "'Lexend', sans-serif",
+                fontSize: 13,
+                lineHeight: 1.78,
+                color: "var(--ink)",
+                whiteSpace: "pre-wrap",
+                wordBreak: "break-word",
+                flex: 1,
+                margin: 0,
+              }}>
                 {result}
               </pre>
-              <button
-                onClick={handleEmailResult}
-                disabled={emailSending || emailSent}
-                className="w-full py-2 rounded-lg border border-zinc-300 bg-white text-sm font-medium hover:bg-zinc-50 disabled:opacity-50"
-              >
-                {emailSending
-                  ? "Sending..."
-                  : emailSent
-                  ? "✓ Sent to your email"
-                  : "Send to my email"}
-              </button>
+              <div style={{ display: "flex", gap: 8, marginTop: 16, flexWrap: "wrap" }}>
+                <button
+                  onClick={handleCopy}
+                  style={{
+                    fontFamily: "'Space Mono', monospace",
+                    fontSize: 10,
+                    fontWeight: 700,
+                    textTransform: "uppercase",
+                    letterSpacing: 1,
+                    background: copied ? "var(--teal)" : "var(--bg)",
+                    color: "var(--ink)",
+                    border: "var(--b2)",
+                    boxShadow: "var(--sh-xs)",
+                    padding: "8px 16px",
+                    cursor: "pointer",
+                  }}
+                >
+                  {copied ? "[ COPIED ✓ ]" : "[ COPY TEXT ]"}
+                </button>
+                <button
+                  onClick={handleEmail}
+                  disabled={emailSending || emailSent}
+                  style={{
+                    fontFamily: "'Space Mono', monospace",
+                    fontSize: 10,
+                    fontWeight: 700,
+                    textTransform: "uppercase",
+                    letterSpacing: 1,
+                    background: emailSent ? "var(--teal)" : "var(--wht)",
+                    color: "var(--ink)",
+                    border: "var(--b2)",
+                    boxShadow: "var(--sh-xs)",
+                    padding: "8px 16px",
+                    cursor: emailSending || emailSent ? "not-allowed" : "pointer",
+                    opacity: emailSending ? .6 : 1,
+                  }}
+                >
+                  {emailSending ? "SENDING..." : emailSent ? "[ SENT ✓ ]" : "[ EMAIL ME ]"}
+                </button>
+              </div>
             </>
           ) : (
-            <p className="text-sm text-zinc-500">
-              Your generated content will appear here.
-            </p>
+            <div style={{
+              flex: 1,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: 12,
+              color: "var(--con)",
+            }}>
+              <div style={{
+                fontFamily: "'Syne', sans-serif",
+                fontSize: 48,
+                fontWeight: 800,
+                WebkitTextStroke: "3px var(--con)",
+                color: "transparent",
+                lineHeight: 1,
+              }}>⚡</div>
+              <div style={{
+                fontFamily: "'Space Grotesk', sans-serif",
+                fontSize: 10,
+                fontWeight: 700,
+                textTransform: "uppercase",
+                letterSpacing: 3,
+              }}>OUTPUT WILL APPEAR HERE</div>
+            </div>
           )}
         </div>
       </div>

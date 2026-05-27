@@ -1,0 +1,1285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>VERDHANA AI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Space+Grotesk:wght@300;400;500;600;700&family=Syne:wght@400;500;600;700;800&family=BioRhyme:wght@200;300;400;700;800&family=Lexend:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg:      #F0F0F0;
+      --con:     #7D7F7D;
+      --white:   #FFFFFF;
+      --ora:     #FF3D00;
+      --teal:    #00BFAE;
+      --dark:    #1C1C1E;
+      --b3:      3px solid #1C1C1E;
+      --b2:      2px solid #1C1C1E;
+      --sh:      5px 5px 0px #1C1C1E;
+      --sh-sm:   3px 3px 0px #1C1C1E;
+      --sh-xs:   2px 2px 0px #1C1C1E;
+    }
+
+    html { -webkit-tap-highlight-color: transparent; }
+
+    body {
+      background: var(--bg);
+      font-family: 'Lexend', sans-serif;
+      color: var(--dark);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    .app {
+      max-width: 430px;
+      margin: 0 auto;
+      min-height: 100vh;
+      background: var(--bg);
+      position: relative;
+    }
+
+    @media (min-width: 500px) {
+      .app {
+        border-left: var(--b3);
+        border-right: var(--b3);
+        box-shadow: 8px 0 0 var(--dark), -8px 0 0 var(--dark);
+      }
+    }
+
+    /* ── HEADER ─────────────────────────────────── */
+    .hdr {
+      background: var(--white);
+      border-bottom: var(--b3);
+      padding: 13px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .brand {
+      font-family: 'BioRhyme', serif;
+      font-weight: 800;
+      font-size: 20px;
+      letter-spacing: -0.5px;
+      text-transform: uppercase;
+      line-height: 1;
+      color: var(--dark);
+      user-select: none;
+    }
+    .brand em { font-style: normal; color: var(--ora); }
+
+    .hdr-badge {
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      background: var(--teal);
+      color: var(--dark);
+      padding: 5px 12px;
+      border: var(--b2);
+      box-shadow: var(--sh-xs);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      white-space: nowrap;
+    }
+
+    /* ── TICKER ──────────────────────────────────── */
+    .ticker {
+      background: var(--dark);
+      border-bottom: var(--b2);
+      padding: 6px 0;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+    .t-track {
+      display: inline-block;
+      animation: tick 24s linear infinite;
+    }
+    .t-track span {
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--teal);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      padding: 0 16px;
+    }
+    .t-track .sep { color: var(--ora); }
+    @keyframes tick { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+    /* ── PAGE SWITCHING ──────────────────────────── */
+    .page { display: none; padding-bottom: 74px; }
+    .page.on { display: block; }
+
+    /* ── PAGE 1: SPECIALISTS ─────────────────────── */
+    .pg-hdr { padding: 18px 18px 8px; }
+
+    .lbl {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      color: var(--con);
+      margin-bottom: 4px;
+    }
+
+    .pg-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 34px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: -1.5px;
+      line-height: 0.92;
+      color: var(--dark);
+    }
+
+    /* category strip */
+    .cat {
+      margin: 0 18px;
+      background: var(--dark);
+      padding: 6px 14px;
+      border: var(--b3);
+      border-top: none;
+    }
+    .cat.first { border-top: var(--b3); }
+    .cat-name {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      color: var(--teal);
+      font-weight: 700;
+    }
+
+    /* specialist card */
+    .sc {
+      background: var(--white);
+      border: var(--b3);
+      border-top: none;
+      margin: 0 18px;
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      gap: 13px;
+      cursor: pointer;
+      position: relative;
+      transition: background .08s, transform .08s, box-shadow .08s;
+    }
+    .sc:hover {
+      background: #F7F7F7;
+      transform: translate(-2px, -2px);
+      box-shadow: var(--sh);
+      z-index: 2;
+    }
+    .sc:active { transform: translate(2px, 2px); box-shadow: none; }
+
+    /* stamp icon – Gaya 2: Raw Ticket Stamp */
+    .stamp {
+      width: 50px;
+      height: 50px;
+      flex-shrink: 0;
+      border: 3px solid var(--dark);
+      box-shadow: var(--sh-xs);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .stamp::before {
+      content: '';
+      position: absolute;
+      inset: 4px;
+      border: 1px dashed rgba(0,0,0,.22);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .stamp .code {
+      font-family: 'Syne', sans-serif;
+      font-size: 17px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: -1px;
+      line-height: 1;
+      position: relative;
+      z-index: 1;
+    }
+    .s-ora  { background: var(--ora); }  .s-ora  .code { color: var(--white); }
+    .s-teal { background: var(--teal); } .s-teal .code { color: var(--dark); }
+    .s-dark { background: var(--dark); } .s-dark .code { color: var(--teal); }
+    .s-dark::before { border-color: rgba(255,255,255,.18); }
+    .s-wht  { background: var(--white); border: 3px solid var(--dark); } .s-wht .code { color: var(--dark); }
+
+    .sc-info { flex: 1; min-width: 0; }
+    .sc-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .3px;
+      line-height: 1.2;
+      color: var(--dark);
+    }
+    .sc-sub {
+      font-family: 'Lexend', sans-serif;
+      font-size: 11px;
+      color: var(--con);
+      margin-top: 2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .sc-arr {
+      font-family: 'Space Mono', monospace;
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--ora);
+      flex-shrink: 0;
+    }
+
+    /* ── PAGE 2: FORM ────────────────────────────── */
+    .form-nav { padding: 16px 18px 0; }
+    .back {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--ora);
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 0;
+      margin-bottom: 14px;
+    }
+    .back:hover { text-decoration: underline; }
+
+    .form-title-blk {
+      margin: 0 18px 14px;
+      background: var(--dark);
+      border: var(--b3);
+      padding: 14px 16px;
+    }
+    .form-spec-tag {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      color: var(--teal);
+      font-weight: 700;
+      margin-bottom: 5px;
+    }
+    .form-main-ttl {
+      font-family: 'Syne', sans-serif;
+      font-size: 26px;
+      font-weight: 800;
+      text-transform: uppercase;
+      line-height: 0.95;
+      -webkit-text-stroke: 2px var(--white);
+      color: transparent;
+      letter-spacing: -1px;
+    }
+
+    .quota-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 18px;
+      margin-bottom: 14px;
+    }
+    .quota-chip {
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      background: var(--teal);
+      color: var(--dark);
+      padding: 6px 14px;
+      border: var(--b2);
+      box-shadow: var(--sh-sm);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .model-tag {
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      color: var(--con);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .form-body {
+      padding: 0 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .fg { display: flex; flex-direction: column; gap: 5px; }
+
+    .fl {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-weight: 700;
+      color: var(--dark);
+      display: flex;
+      align-items: center;
+      gap: 3px;
+    }
+    .req { color: var(--ora); }
+
+    .fi, .fa {
+      font-family: 'Lexend', sans-serif;
+      font-size: 14px;
+      background: var(--white);
+      border: var(--b3);
+      box-shadow: var(--sh-sm);
+      padding: 11px 13px;
+      color: var(--dark);
+      outline: none;
+      width: 100%;
+      border-radius: 0;
+      -webkit-appearance: none;
+      transition: border-color .1s, box-shadow .1s;
+    }
+    .fi::placeholder, .fa::placeholder { color: var(--con); font-size: 12px; }
+    .fi:focus, .fa:focus { border-color: var(--ora); box-shadow: 3px 3px 0px var(--ora); }
+    .fa { min-height: 88px; resize: vertical; }
+
+    /* tone row */
+    .tone-row {
+      display: flex;
+      border: var(--b3);
+      box-shadow: var(--sh-sm);
+    }
+    .tone-opt {
+      flex: 1;
+      padding: 10px 4px;
+      font-family: 'Syne', sans-serif;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      border: none;
+      border-right: 2px solid var(--dark);
+      background: var(--white);
+      color: var(--dark);
+      cursor: pointer;
+      transition: background .08s;
+    }
+    .tone-opt:last-child { border-right: none; }
+    .tone-opt.act { background: var(--ora); color: var(--white); }
+    .tone-opt:hover:not(.act) { background: var(--bg); }
+
+    /* model grid */
+    .mgrid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      border: var(--b3);
+      box-shadow: var(--sh);
+    }
+    .mc {
+      padding: 12px 12px 10px;
+      border-right: 2px solid var(--dark);
+      border-bottom: 2px solid var(--dark);
+      cursor: pointer;
+      background: var(--white);
+      position: relative;
+      transition: background .08s;
+    }
+    .mc:nth-child(2), .mc:nth-child(4) { border-right: none; }
+    .mc:nth-child(3), .mc:nth-child(4) { border-bottom: none; }
+    .mc.act { background: var(--dark); }
+    .mc:hover:not(.act) { background: var(--bg); }
+    .mc-name {
+      font-family: 'Syne', sans-serif;
+      font-size: 13px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: -.3px;
+      color: var(--dark);
+    }
+    .mc.act .mc-name { color: var(--ora); }
+    .mc-spd {
+      font-family: 'Space Mono', monospace;
+      font-size: 9px;
+      color: var(--con);
+      margin-top: 2px;
+    }
+    .mf {
+      position: absolute;
+      top: 7px; right: 7px;
+      font-family: 'Space Mono', monospace;
+      font-size: 7px;
+      font-weight: 700;
+      padding: 2px 5px;
+      border: 1px solid var(--dark);
+      text-transform: uppercase;
+    }
+    .mf-pro { background: var(--teal); color: var(--dark); }
+    .mf-on  { background: var(--ora); color: var(--white); border-color: var(--white); }
+
+    /* generate btn */
+    .gen-wrap { padding: 0 18px; margin-top: 6px; }
+    .gen-btn {
+      width: 100%;
+      padding: 18px 20px;
+      font-family: 'Syne', sans-serif;
+      font-size: 17px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      background: var(--ora);
+      color: var(--dark);
+      border: var(--b3);
+      box-shadow: var(--sh);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: transform .08s, box-shadow .08s;
+    }
+    .gen-btn:hover { transform: translate(-2px,-2px); box-shadow: 7px 7px 0px var(--dark); }
+    .gen-btn:active { transform: translate(5px,5px); box-shadow: 0px 0px 0px var(--dark); }
+    .gen-btn:disabled { opacity: .5; cursor: not-allowed; transform: none; box-shadow: var(--sh); }
+    .gen-ico { font-size: 20px; }
+
+    /* loading */
+    .load-wrap {
+      display: none;
+      margin: 14px 18px 0;
+      border: var(--b3);
+      background: var(--white);
+      padding: 14px 16px;
+      align-items: center;
+      gap: 12px;
+      box-shadow: var(--sh);
+    }
+    .load-wrap.on { display: flex; }
+    .bar-track { flex: 1; height: 6px; background: var(--bg); border: 1px solid var(--dark); overflow: hidden; }
+    .bar-fill { height: 100%; background: var(--ora); animation: barrun 1.8s ease-in-out infinite; }
+    @keyframes barrun {
+      0%   { width: 0%;   margin-left: 0; }
+      50%  { width: 65%;  margin-left: 0; }
+      100% { width: 0%;   margin-left: 100%; }
+    }
+    .load-txt {
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--dark);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      white-space: nowrap;
+    }
+
+    /* output */
+    .out-wrap { display: none; margin: 14px 18px 0; }
+    .out-wrap.on { display: block; }
+    .out-box {
+      border: var(--b3);
+      box-shadow: var(--sh);
+      background: var(--white);
+      padding: 16px;
+    }
+    .out-lbl {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      color: var(--con);
+      font-weight: 700;
+      margin-bottom: 10px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid var(--bg);
+    }
+    .out-txt {
+      font-family: 'Lexend', sans-serif;
+      font-size: 13px;
+      line-height: 1.78;
+      color: var(--dark);
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .copy-btn {
+      margin-top: 12px;
+      padding: 8px 16px;
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      background: var(--bg);
+      color: var(--dark);
+      border: var(--b2);
+      box-shadow: var(--sh-xs);
+      cursor: pointer;
+      transition: transform .08s, box-shadow .08s;
+    }
+    .copy-btn:active { transform: translate(2px,2px); box-shadow: none; }
+    .copy-btn.copied { background: var(--teal); }
+
+    /* field error */
+    .ferr { border-color: var(--ora) !important; box-shadow: 3px 3px 0px var(--ora) !important; }
+
+    /* bottom nav */
+    .bnav {
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 430px;
+      background: var(--white);
+      border-top: var(--b3);
+      display: flex;
+      z-index: 200;
+    }
+    .nb {
+      flex: 1;
+      padding: 12px 8px;
+      border: none;
+      background: transparent;
+      border-right: 2px solid var(--dark);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      cursor: pointer;
+      transition: background .08s;
+    }
+    .nb:last-child { border-right: none; }
+    .nb.act { background: var(--dark); }
+    .nb:hover:not(.act) { background: var(--bg); }
+    .nb-ico { font-size: 16px; line-height: 1; }
+    .nb-lbl {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 8px;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      font-weight: 700;
+      color: var(--con);
+    }
+    .nb.act .nb-lbl { color: var(--teal); }
+
+    ::-webkit-scrollbar { width: 3px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--dark); }
+  </style>
+</head>
+<body>
+<div class="app">
+
+  <!-- HEADER -->
+  <header class="hdr">
+    <div class="brand">VERDHANA<em>AI</em></div>
+    <div class="hdr-badge" id="hdr-quota">10/10 LEFT</div>
+  </header>
+
+  <!-- TICKER -->
+  <div class="ticker">
+    <div class="t-track">
+      <span>AI COPYWRITING ENGINE</span><span class="sep">///</span>
+      <span>12 SPECIALISTS ACTIVE</span><span class="sep">///</span>
+      <span>GENERATE. CONVERT. DOMINATE.</span><span class="sep">///</span>
+      <span>URBAN CONCRETE VIBES</span><span class="sep">///</span>
+      <span>AI COPYWRITING ENGINE</span><span class="sep">///</span>
+      <span>12 SPECIALISTS ACTIVE</span><span class="sep">///</span>
+      <span>GENERATE. CONVERT. DOMINATE.</span><span class="sep">///</span>
+      <span>URBAN CONCRETE VIBES</span><span class="sep">///</span>
+    </div>
+  </div>
+
+  <!-- ══════════════════ PAGE 1: SPECIALISTS ══════════════════ -->
+  <div class="page on" id="pg-spec">
+    <div class="pg-hdr">
+      <div class="lbl">— Choose Your Weapon —</div>
+      <div class="pg-title">SPECIALISTS</div>
+    </div>
+
+    <!-- PAID ADVERTISING -->
+    <div class="cat first"><span class="cat-name">PAID ADVERTISING</span></div>
+    <div class="sc" onclick="openForm('facebook-ads','FACEBOOK ADS WRITER','FB')">
+      <div class="stamp s-ora"><span class="code">FB</span></div>
+      <div class="sc-info">
+        <div class="sc-title">Facebook Ads Writer</div>
+        <div class="sc-sub">High-converting ad copy for Meta</div>
+      </div>
+      <div class="sc-arr">→</div>
+    </div>
+    <div class="sc" onclick="openForm('google-headlines','GOOGLE ADS HEADLINES','GA')">
+      <div class="stamp s-teal"><span class="code">GA</span></div>
+      <div class="sc-info">
+        <div class="sc-title">Google Ads Headlines</div>
+        <div class="sc-sub">Search & display headlines built for CTR</div>
+      </div>
+      <div class="sc-arr">→</div>
+    </div>
+    <div class="sc" onclick="openForm('tiktok-ads','TIKTOK AD SCRIPT WRITER','TT')">
+      <div class="stamp s-dark"><span class="code">TT</span></div>
+      <div class="sc-info">
+        <div class="sc-title">TikTok Ad Script Writer</div>
+        <div class="sc-sub">Viral hooks &amp; scripts for TikTok</div>
+      </div>
+      <div class="sc-arr">→</div>
+    </div>
+
+    <!-- SOCIAL MEDIA -->
+    <div class="cat"><span class="cat-name">SOCIAL MEDIA</span></div>
+    <div class="sc" onclick="openForm('instagram-captions','INSTAGRAM CAPTION WRITER','IG')">
+      <div class="stamp s-ora"><span class="code">IG</span></div>
+      <div class="sc-info">
+        <div class="sc-title">Instagram Caption Writer</div>
+        <div class="sc-sub">Captions that earn comments &amp; saves</div>
+      </div>
+      <div class="sc-arr">→</div>
+    </div>
+    <div class="sc" onclick="openForm('push-notification','PUSH NOTIFICATION WRITER','PN')">
+      <div class="stamp s-teal"><span class="code">PN</span></div>
+      <div class="sc-info">
+        <div class="sc-title">Push Notification Writer</div>
+        <div class="sc-sub">Notifications people don't swipe away</div>
+      </div>
+      <div class="sc-arr">→</div>
+    </div>
+    <div class="sc" onclick="openForm('linkedin-ads','LINKEDIN ADS WRITER','LI')">
+      <div class="stamp s-wht"><span class="code">LI</span></div>
+      <div class="sc-info">
+        <div class="sc-title">LinkedIn Ads Writer</div>
+        <div class="sc-sub">B2B copy that respects the reader's time</div>
+      </div>
+      <div class="sc-arr">→</div>
+    </div>
+    <div class="sc" onclick="openForm('sms-marketing','SMS MARKETING WRITER','SM')">
+      <div class="stamp s-dark"><span class="code">SM</span></div>
+      <div class="sc-info">
+        <div class="sc-title">SMS Marketing Writer</div>
+        <div class="sc-sub">Campaigns that don't feel like spam</div>
+      </div>
+      <div class="sc-arr">→</div>
+    </div>
+
+    <!-- CONTENT CREATION -->
+    <div class="cat"><span class="cat-name">CONTENT CREATION</span></div>
+    <div class="sc" onclick="openForm('youtube-titles','YOUTUBE TITLE WRITER','YT')">
+      <div class="stamp s-ora"><span class="code">YT</span></div>
+      <div class="sc-info">
+        <div class="sc-title">YouTube Title Writer</div>
+        <div class="sc-sub">Titles that earn the click honestly</div>
+      </div>
+      <div class="sc-arr">→</div>
+    </div>
+    <div class="sc" onclick="openForm('email-marketing','EMAIL MARKETING WRITER','EM')">
+      <div class="stamp s-teal"><span class="code">EM</span></div>
+      <div class="sc-info">
+        <div class="sc-title">Email Marketing Writer</div>
+        <div class="sc-sub">Emails written like a person, not a brand</div>
+      </div>
+      <div class="sc-arr">→</div>
+    </div>
+    <div class="sc" onclick="openForm('product-description','PRODUCT DESCRIPTION WRITER','PD')">
+      <div class="stamp s-wht"><span class="code">PD</span></div>
+      <div class="sc-info">
+        <div class="sc-title">Product Description Writer</div>
+        <div class="sc-sub">Copy that reads like a knowledgeable owner</div>
+      </div>
+      <div class="sc-arr">→</div>
+    </div>
+
+    <!-- CONVERSION -->
+    <div class="cat"><span class="cat-name">CONVERSION</span></div>
+    <div class="sc" onclick="openForm('landing-page','LANDING PAGE COPY','LP')">
+      <div class="stamp s-ora"><span class="code">LP</span></div>
+      <div class="sc-info">
+        <div class="sc-title">Landing Page Copy</div>
+        <div class="sc-sub">Full page copy from hero to FAQ</div>
+      </div>
+      <div class="sc-arr">→</div>
+    </div>
+    <div class="sc" onclick="openForm('video-script','VIDEO AD SCRIPT WRITER','VS')">
+      <div class="stamp s-dark"><span class="code">VS</span></div>
+      <div class="sc-info">
+        <div class="sc-title">Video Ad Script Writer</div>
+        <div class="sc-sub">Scripts for YouTube and Meta video ads</div>
+      </div>
+      <div class="sc-arr">→</div>
+    </div>
+  </div><!-- /pg-spec -->
+
+  <!-- ══════════════════ PAGE 2: FORM ══════════════════ -->
+  <div class="page" id="pg-form">
+    <div class="form-nav">
+      <button class="back" onclick="goBack()">← BACK TO SPECIALISTS</button>
+    </div>
+
+    <div class="form-title-blk">
+      <div class="form-spec-tag" id="form-tag">FB — SPECIALIST MODE</div>
+      <div class="form-main-ttl" id="form-ttl">FACEBOOK ADS WRITER</div>
+    </div>
+
+    <div class="quota-row">
+      <div class="quota-chip" id="quota-chip">10/10 LEFT TODAY</div>
+      <div class="model-tag" id="mdl-ind">MODEL: FAST</div>
+    </div>
+
+    <div class="form-body">
+      <div id="dyn-fields"></div>
+
+      <!-- Tone -->
+      <div class="fg">
+        <div class="fl">TONE OF VOICE</div>
+        <div class="tone-row">
+          <button class="tone-opt act" onclick="setTone(this,'Bold')">BOLD</button>
+          <button class="tone-opt" onclick="setTone(this,'Casual')">CASUAL</button>
+          <button class="tone-opt" onclick="setTone(this,'Pro')">PRO</button>
+          <button class="tone-opt" onclick="setTone(this,'Funny')">FUNNY</button>
+        </div>
+      </div>
+
+      <!-- AI Model -->
+      <div class="fg">
+        <div class="fl">AI MODEL</div>
+        <div class="mgrid">
+          <div class="mc act" onclick="setModel(this,'FAST')">
+            <div class="mc-name">FAST</div>
+            <div class="mc-spd">~3 SEC</div>
+            <div class="mf mf-on">ON</div>
+          </div>
+          <div class="mc" onclick="setModel(this,'BALANCED')">
+            <div class="mc-name">BALANCED</div>
+            <div class="mc-spd">~8 SEC</div>
+          </div>
+          <div class="mc" onclick="setModel(this,'PREMIUM')">
+            <div class="mc-name">PREMIUM</div>
+            <div class="mc-spd">~15 SEC</div>
+            <div class="mf mf-pro">PRO</div>
+          </div>
+          <div class="mc" onclick="setModel(this,'ULTRA')">
+            <div class="mc-name">ULTRA</div>
+            <div class="mc-spd">~30 SEC</div>
+            <div class="mf mf-pro">PRO</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Loading -->
+    <div class="load-wrap" id="load-wrap">
+      <div class="bar-track"><div class="bar-fill"></div></div>
+      <div class="load-txt">GENERATING...</div>
+    </div>
+
+    <!-- Output -->
+    <div class="out-wrap" id="out-wrap">
+      <div class="out-box">
+        <div class="out-lbl">GENERATED OUTPUT ///</div>
+        <div class="out-txt" id="out-txt"></div>
+        <button class="copy-btn" id="copy-btn" onclick="copyOutput()">[ COPY TEXT ]</button>
+      </div>
+    </div>
+
+    <!-- Generate button -->
+    <div class="gen-wrap" style="margin-top:14px;padding-bottom:20px;">
+      <button class="gen-btn" id="gen-btn" onclick="doGenerate()">
+        GENERATE COPY <span class="gen-ico">⚡</span>
+      </button>
+    </div>
+  </div><!-- /pg-form -->
+
+  <!-- BOTTOM NAV -->
+  <nav class="bnav">
+    <button class="nb act" id="nb-home" onclick="navTo('home')">
+      <span class="nb-ico">⊞</span><span class="nb-lbl">SPECIALISTS</span>
+    </button>
+    <button class="nb" id="nb-hist" onclick="navTo('hist')">
+      <span class="nb-ico">◈</span><span class="nb-lbl">HISTORY</span>
+    </button>
+    <button class="nb" id="nb-acct" onclick="navTo('acct')">
+      <span class="nb-ico">◉</span><span class="nb-lbl">ACCOUNT</span>
+    </button>
+  </nav>
+
+</div><!-- /app -->
+
+<script>
+let quota = 10, slug = '', tone = 'Bold', mdl = 'FAST';
+
+const FIELDS = {
+  'facebook-ads':        [{id:'product',lbl:'PRODUCT / SERVICE',ph:'e.g. Online yoga course',req:true},{id:'audience',lbl:'TARGET AUDIENCE',ph:'e.g. Women 25-45 interested in wellness',req:true},{id:'tone_v',lbl:'BRAND VOICE',ph:'e.g. Calm, direct, conversational',req:false}],
+  'tiktok-ads':          [{id:'product',lbl:'PRODUCT / SERVICE',ph:'e.g. Skincare serum',req:true},{id:'audience',lbl:'TARGET AUDIENCE',ph:'e.g. Women 22–30',req:true},{id:'hook_style',lbl:'HOOK STYLE',ph:'e.g. POV, observation, demo',req:false}],
+  'google-headlines':    [{id:'product',lbl:'PRODUCT / SERVICE',ph:'e.g. Managed web hosting',req:true},{id:'keywords',lbl:'TARGET KEYWORDS',ph:'e.g. fast hosting, secure hosting',req:true},{id:'usp',lbl:'UNIQUE SELLING POINT',ph:'e.g. 99.99% uptime, free migration',req:false}],
+  'instagram-captions':  [{id:'post_topic',lbl:'POST TOPIC',ph:'e.g. Morning routine of a senior PM',req:true},{id:'niche',lbl:'NICHE',ph:'e.g. Career development for tech professionals',req:true},{id:'goal',lbl:'GOAL',ph:'e.g. Drive comments, build authority',req:false}],
+  'email-marketing':     [{id:'campaign',lbl:'CAMPAIGN TYPE',ph:'e.g. Welcome, re-engagement, product launch',req:true},{id:'audience',lbl:'AUDIENCE',ph:"e.g. SaaS founders who signed up but didn't activate",req:true},{id:'offer',lbl:'OFFER / MAIN MESSAGE',ph:'e.g. Free 30-min onboarding call',req:false,ta:true}],
+  'youtube-titles':      [{id:'video_topic',lbl:'VIDEO TOPIC',ph:'e.g. How I rebuilt my finances after a layoff',req:true},{id:'niche',lbl:'CHANNEL NICHE',ph:'e.g. Personal finance for tech workers',req:true},{id:'keyword',lbl:'TARGET KEYWORD',ph:'e.g. emergency fund',req:false}],
+  'product-description': [{id:'product_name',lbl:'PRODUCT NAME',ph:'e.g. Bamboo Toothbrush',req:true},{id:'features',lbl:'KEY FEATURES',ph:'e.g. Biodegradable handle, soft nylon bristles, 4-pack',req:true,ta:true},{id:'audience',lbl:'TARGET BUYER',ph:'e.g. Households looking to reduce plastic waste',req:false}],
+  'video-script':        [{id:'product',lbl:'PRODUCT',ph:'e.g. AI sales assistant for B2B teams',req:true},{id:'audience',lbl:'AUDIENCE',ph:'e.g. VP of Sales at 50–500 person SaaS',req:true},{id:'main_benefit',lbl:'MAIN BENEFIT',ph:'e.g. Cuts SDR research time by 70%',req:false}],
+  'landing-page':        [{id:'product',lbl:'PRODUCT',ph:'e.g. Async standup tool for remote teams',req:true},{id:'audience',lbl:'AUDIENCE',ph:'e.g. Engineering managers of distributed teams',req:true},{id:'main_benefit',lbl:'MAIN PROMISE',ph:'e.g. Replace daily meetings with 2-minute updates',req:false}],
+  'push-notification':   [{id:'context',lbl:'APP / CONTEXT',ph:'e.g. Habit tracking app',req:true},{id:'goal',lbl:'GOAL',ph:"e.g. Bring back users who haven't opened in 7 days",req:true}],
+  'sms-marketing':       [{id:'brand',lbl:'BRAND',ph:'e.g. Independent coffee roaster',req:true},{id:'offer',lbl:'OFFER / CAMPAIGN',ph:'e.g. New seasonal blend, 15% off first bag',req:true}],
+  'linkedin-ads':        [{id:'product',lbl:'PRODUCT / SERVICE',ph:'e.g. Outbound sales platform',req:true},{id:'audience',lbl:'TARGET ROLE',ph:'e.g. Heads of Sales at Series B+ SaaS',req:true},{id:'pain_point',lbl:'PAIN POINT',ph:'e.g. SDR ramp time is killing pipeline forecasting',req:false}],
+};
+
+function openForm(s, title, code) {
+  slug = s;
+  document.getElementById('form-tag').textContent = code + ' — SPECIALIST MODE';
+  document.getElementById('form-ttl').textContent = title;
+  // build fields
+  const c = document.getElementById('dyn-fields');
+  c.innerHTML = '';
+  (FIELDS[s]||[]).forEach(f => {
+    const d = document.createElement('div'); d.className = 'fg';
+    d.innerHTML = `<div class="fl">${f.lbl}${f.req?' <span class="req">*</span>':''}</div>`
+      + (f.ta ? `<textarea class="fa" id="f-${f.id}" placeholder="${f.placeholder||f.ph}"></textarea>`
+               : `<input type="text" class="fi" id="f-${f.id}" placeholder="${f.placeholder||f.ph}">`);
+    c.appendChild(d);
+  });
+  // reset
+  document.getElementById('out-wrap').classList.remove('on');
+  document.getElementById('load-wrap').classList.remove('on');
+  const btn = document.getElementById('gen-btn');
+  btn.disabled = false;
+  btn.innerHTML = 'GENERATE COPY <span class="gen-ico">⚡</span>';
+  document.querySelectorAll('.tone-opt').forEach((b,i) => { b.classList.toggle('act', i===0); });
+  tone = 'Bold';
+  document.getElementById('pg-spec').classList.remove('on');
+  document.getElementById('pg-form').classList.add('on');
+  document.getElementById('nb-home').classList.remove('act');
+  window.scrollTo(0, 0);
+}
+
+function goBack() {
+  document.getElementById('pg-form').classList.remove('on');
+  document.getElementById('pg-spec').classList.add('on');
+  document.getElementById('nb-home').classList.add('act');
+  window.scrollTo(0, 0);
+}
+
+function navTo(t) {
+  document.querySelectorAll('.nb').forEach(b => b.classList.remove('act'));
+  if (t === 'home') {
+    document.getElementById('nb-home').classList.add('act');
+    document.getElementById('pg-form').classList.remove('on');
+    document.getElementById('pg-spec').classList.add('on');
+  } else if (t === 'hist') {
+    document.getElementById('nb-hist').classList.add('act');
+  } else {
+    document.getElementById('nb-acct').classList.add('act');
+  }
+}
+
+function setTone(btn, t) {
+  tone = t;
+  document.querySelectorAll('.tone-opt').forEach(b => b.classList.remove('act'));
+  btn.classList.add('act');
+}
+
+function setModel(card, m) {
+  mdl = m;
+  document.getElementById('mdl-ind').textContent = 'MODEL: ' + m;
+  document.querySelectorAll('.mc').forEach(c => {
+    c.classList.remove('act');
+    const f = c.querySelector('.mf-on');
+    if (f) f.remove();
+  });
+  card.classList.add('act');
+  const f = document.createElement('div');
+  f.className = 'mf mf-on'; f.textContent = 'ON';
+  card.appendChild(f);
+}
+
+function vals() {
+  const v = {};
+  (FIELDS[slug]||[]).forEach(f => {
+    const el = document.getElementById('f-'+f.id);
+    if (el) v[f.id] = el.value.trim();
+  });
+  return v;
+}
+
+function validate() {
+  let ok = true;
+  (FIELDS[slug]||[]).filter(f=>f.req).forEach(f => {
+    const el = document.getElementById('f-'+f.id);
+    if (el && !el.value.trim()) {
+      el.classList.add('ferr');
+      setTimeout(()=>el.classList.remove('ferr'), 2000);
+      ok = false;
+    }
+  });
+  return ok;
+}
+
+function doGenerate() {
+  if (!validate()) return;
+  if (quota <= 0) { showOut('QUOTA EXHAUSTED.\nUpgrade to Pro for unlimited daily generations.'); return; }
+  const btn = document.getElementById('gen-btn');
+  document.getElementById('load-wrap').classList.add('on');
+  document.getElementById('out-wrap').classList.remove('on');
+  btn.disabled = true;
+  btn.innerHTML = 'GENERATING... <span class="gen-ico">⏳</span>';
+  const delay = {FAST:2200,BALANCED:4000,PREMIUM:6000,ULTRA:8500}[mdl]||2200;
+  setTimeout(() => {
+    document.getElementById('load-wrap').classList.remove('on');
+    const v = vals();
+    showOut(gen(slug, v, tone));
+    quota--;
+    document.getElementById('hdr-quota').textContent = quota + '/10 LEFT';
+    document.getElementById('quota-chip').textContent = quota + '/10 LEFT TODAY';
+    btn.disabled = false;
+    btn.innerHTML = 'REGENERATE <span class="gen-ico">⚡</span>';
+    document.getElementById('out-wrap').scrollIntoView({behavior:'smooth',block:'nearest'});
+  }, delay);
+}
+
+function showOut(txt) {
+  document.getElementById('out-txt').textContent = txt;
+  document.getElementById('out-wrap').classList.add('on');
+}
+
+function copyOutput() {
+  const txt = document.getElementById('out-txt').textContent;
+  const btn = document.getElementById('copy-btn');
+  const done = () => { btn.textContent='[ COPIED ✓ ]'; btn.classList.add('copied'); setTimeout(()=>{ btn.textContent='[ COPY TEXT ]'; btn.classList.remove('copied'); }, 2000); };
+  if (navigator.clipboard) { navigator.clipboard.writeText(txt).then(done).catch(done); }
+  else { const ta=document.createElement('textarea'); ta.value=txt; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta); done(); }
+}
+
+function gen(s, v, t) {
+  const hooks = {
+    Bold:   ["Your results depend on what you write next.","Most people waste money on ads that say nothing.","The difference between 3% and 0.3% CTR is the first line."],
+    Casual: ["Okay, real talk.","Here's the thing nobody mentions.","Three things changed last quarter."],
+    Pro:    ["Three data points drove this copy.","Here's what our top-performing clients do differently.","This approach cut cost-per-lead by 41%."],
+    Funny:  ["Plot twist: nobody cares about your product.","Hot take incoming.","Unpopular opinion: your current copy is putting people to sleep."]
+  };
+  const hook = (hooks[t]||hooks.Bold)[Math.floor(Math.random()*3)];
+  const prd  = v.product||v.product_name||v.brand||v.context||'[PRODUCT]';
+  const aud  = v.audience||v.niche||v.goal||'[AUDIENCE]';
+  const xtra = v.usp||v.main_benefit||v.offer||v.pain_point||v.features||'';
+
+  const T = {
+    'facebook-ads': ()=>
+`AD VARIATION 1
+
+Hook: ${hook}
+
+Body: ${prd} isn't for everyone. It's for ${aud} who decided mediocre results aren't acceptable anymore.${xtra?'\n\n'+xtra:''}
+
+Your competitors are already running. The question is whether you're ahead or catching up.
+
+CTA: See what's possible →
+
+---
+
+AD VARIATION 2
+
+Hook: The studio schedule doesn't match your life schedule.
+
+Body: ${prd} fits around ${aud} — not the other way around. No wasted budget. No generic targeting. Just copy that gets out of the way and lets the product speak.
+
+CTA: Start your first campaign →
+
+---
+
+AD VARIATION 3
+
+Hook: Last week, 73% of our clients reduced CPL by 34%.
+
+Body: Not because they changed their budget. Because they changed what their ad said in the first line. ${prd} for ${aud} — tested across 2,400 campaigns.
+
+CTA: See the methodology →`,
+
+    'tiktok-ads': ()=>
+`SCRIPT 1 — Direct observation
+
+0–3s  [On screen]: "${hook}"
+0–3s  [Voiceover]: "I need to be honest about something."
+3–12s [Visual]: ${prd} close-up, real environment
+3–12s [Voiceover]: "${prd} isn't a life hack. It's just a better way to do the thing ${aud} already do."
+12–22s [Visual]: Result metric on screen
+12–22s [Voiceover]: "${xtra||'The results took 11 days. We documented everything.'}"
+22–30s [CTA]: "Link in bio. No discount code. Just the product."
+
+---
+
+SCRIPT 2 — Contrast
+
+0–3s  [On screen]: "Two ${aud}. Same starting point. Different results."
+0–3s  [Voiceover]: "Here's what changed."
+3–22s: Side-by-side comparison. Let the numbers talk.
+22–30s [CTA]: "The difference is $${Math.floor(Math.random()*50+20)}/month."`,
+
+    'google-headlines': ()=>
+`SPECIFIC BENEFIT (5)
+1. ${prd} for ${aud} [${(prd+' for '+aud).length} chars]
+2. ${xtra?(xtra.slice(0,25)+'.'):'Results in 7 days or free.'}
+3. 47% lower cost per lead
+4. No setup fees, cancel anytime
+5. Trusted by 2,300+ businesses
+
+KEYWORD-LED (5)
+6. ${(v.keywords||'best solution').split(',')[0].trim()} that actually works
+7. Best ${prd.toLowerCase()} in 2025
+8. ${(v.keywords||'solution').split(',')[0].trim()} — free trial today
+9. Compare ${prd.toLowerCase()} plans
+10. ${prd} — starting at $0
+
+DIFFERENTIATOR (5)
+11. Human-quality. Machine-speed.
+12. Built for ${aud.slice(0,22)}
+13. ${xtra?(xtra.slice(0,22)+' →'):'Your copy. Your voice.'}
+14. No contracts. No BS.
+15. See results before you pay`,
+
+    'instagram-captions': ()=>
+`CAPTION 1
+
+${hook}
+
+${prd} changed how I approach ${v.post_topic||aud}. Not in a dramatic way. In the quiet, slow way that only shows up in the numbers three months later.
+
+${xtra||'The method is public. The results are documented. What you do with it is up to you.'}
+
+If you've been running the same play for more than six months and nothing has shifted — what's your current theory about why?
+
+#${prd.replace(/\s+/g,'')} #${aud.replace(/\s+/g,'')} #marketing #copywriting #results #growth #strategy #content #digitalmarketing #ads #socialmedia #conversion #brand #business #creator
+
+---
+
+CAPTION 2
+
+Three things I changed in ${prd.toLowerCase()} this quarter:
+
+1. Stopped leading with benefits. Started with a scene.
+2. Cut every sentence that started with "I".
+3. ${xtra?xtra.split('.')[0]+'.':'Deleted the last paragraph of every draft.'}
+
+Open rate went from 18% to 31%.
+
+What's one thing you changed recently that actually moved a number?`,
+
+    'email-marketing': ()=>
+`SUBJECT LINES (5)
+1. "Quick question" [13 chars]
+2. "Your ${aud.toLowerCase().slice(0,18)} results from last week" [45 chars]
+3. "The thing we stopped doing in ${prd}" [${(36+prd.length)} chars]
+4. "Is this still relevant to you?" [30 chars]
+5. "${xtra?xtra.slice(0,30):'One change. Three outcomes.'}"
+
+PREHEADER: You don't need more information. You need less friction.
+
+---
+
+Hi [name],
+
+A quick one.
+
+We looked at 847 accounts in the ${aud} segment last quarter. The ones hitting their numbers did one thing differently: they stopped explaining and started showing.
+
+${xtra||"No intro, no context-setting paragraph. Just the thing."}
+
+${prd} has a feature we've never talked about publicly. It's not flashy. It's effective.
+
+[See the demo] →
+
+— Alex
+
+P.S. This is a one-time send. If it's not relevant, ignore it.`,
+
+    'youtube-titles': ()=>
+`SPECIFIC / CONCRETE (3)
+1. "I tracked every ${prd} decision for 90 days. Here's the data." [57 chars]
+2. "What ${aud.slice(0,20)} actually use vs. what they recommend" [55 chars]
+3. "The ${prd} number that changed how I allocate budget" [51 chars]
+
+CURIOSITY-DRIVEN (3)
+4. "The ${prd} advice I've stopped giving" [38 chars]
+5. "Why ${aud.slice(0,18)} never mention this" [40 chars]
+6. "I was wrong about ${prd}. Here's the correction." [48 chars]
+
+GENUINE QUESTION (2)
+7. "Is ${prd} actually worth it for ${aud.slice(0,15)}?" [50 chars]
+8. "What happens when you ${prd.toLowerCase()} with no ${xtra?xtra.slice(0,12):'budget'}?" [50 chars]
+
+CONTRARIAN (2)
+9. "${prd} doesn't work the way most people think it does"
+10. "Stop optimizing ${prd.toLowerCase()}. Do this instead."
+
+THUMBNAIL TEXT (top 3):
+1. "I WAS WRONG"
+2. "90 DAYS OF DATA"
+3. "THEY NEVER MENTION THIS"`,
+
+    'product-description': ()=>
+`HEADLINE
+${prd}: built for people who already know what they're doing
+
+SHORT DESCRIPTION (47 words)
+${prd} is a ${v.features?(v.features.split(',')[0].trim()):'precision-engineered product'} for ${aud}. Not designed to be everything to everyone. Designed to do one thing exceptionally well, last longer than its cheaper alternatives, and not require an instruction manual to operate.
+
+LONG DESCRIPTION
+${prd} exists because we got tired of the middle-of-the-road options. The ones that technically work but make you wish they worked better.
+
+${xtra||'The specs are honest. The claims are backed by testing. The design decisions are documented.'}
+
+We sell to ${aud}. That specificity means the people who buy ${prd} usually keep it.
+
+KEY SPECS
+${v.features?v.features.split(',').slice(0,5).map(f=>'• '+f.trim()).join('\n'):'• Premium grade materials\n• Ships in 2–3 business days\n• 60-day return window\n• Tested for 18 months before launch\n• Made without shortcuts'}
+
+META DESCRIPTION (132 chars)
+${prd} for ${aud}. ${xtra?xtra.slice(0,50)+'.':"Real specs. Honest claims."} Free returns.`,
+
+    'video-script': ()=>
+`30-SECOND SCRIPT
+0–3s  VISUAL: Close on a specific problem moment
+      VOICEOVER: "${hook}"
+3–15s VISUAL: ${prd} in use, real environment
+      VOICEOVER: "For ${aud} who've tried the workarounds — this is what fixing the root problem looks like."
+15–25s VISUAL: Result metric on screen
+       VOICEOVER: "${xtra||'34% reduction in the first month. Not a projection. An invoice.'}"
+25–30s VISUAL: Product name + URL
+       VOICEOVER: "One free trial. No credit card."
+
+---
+
+60-SECOND SCRIPT
+0–5s:  The problem, stated plainly. No dramatic music.
+5–20s: ${prd} shown doing one thing, in detail.
+20–40s: ${aud} talking about one specific change. Real numbers.
+40–55s: How it works. Three steps, thirty seconds.
+55–60s: CTA. One action. One URL.`,
+
+    'landing-page': ()=>
+`HERO
+Headline: ${prd} for ${aud} who want results, not promises
+Subhead: ${xtra||'We cut the onboarding to 8 minutes. The results start showing on day 3.'}
+Primary CTA: [Start free trial]
+Secondary CTA: See how it works
+
+THREE BENEFITS
+1. Works in your existing stack — "No new tabs. No extra logins. It fits where you already work."
+2. Results are measurable in week one — "Your first data point arrives in 47 hours. Not in a quarterly review."
+3. Scales with your team — "${xtra||"One seat to 500. The price doesn't jump at awkward intervals."}"
+
+HOW IT WORKS
+Step 1: Connect your existing tools (8 minutes)
+Step 2: Set your first ${prd.toLowerCase()} target
+Step 3: ${aud} sees results by Thursday
+
+SOCIAL PROOF
+"We went from 2.3% to 6.1% conversion in 23 days." — Marketing Director, Series B SaaS
+"The onboarding took 11 minutes. The Q3 results were not skeptical." — Founder, 47-person agency
+"Cut cost per lead from $118 to $73. Same ad spend." — Growth Lead, e-commerce brand
+
+FAQ
+Q: How much does it cost?
+A: Free trial for 14 days. From $47/month after. No hidden fees.
+Q: Can I cancel?
+A: Yes. Month to month. No exit interview.
+Q: Where does my data go?
+A: Your data stays yours. We don't train on it. We don't sell it.
+Q: What if it doesn't work?
+A: 30-day refund. We've had 12 requests in 14 months.
+
+FINAL CTA
+You've read enough.
+[Start your free trial] — No credit card`,
+
+    'push-notification': ()=>
+`10 PUSH NOTIFICATIONS
+
+1. Title: "You're 3 days in" (16)
+   Body: "Most people stop here. Your streak is actually working." (54)
+
+2. Title: "[first_name], quick one" (22)
+   Body: "You set a goal on Monday. Here's how you're tracking." (52)
+
+3. Title: "From your data" (14)
+   Body: "Your best session was 8am on Wednesday. Coincidence?" (52)
+
+4. Title: "One thing." (10)
+   Body: "That's all. Come back for 4 minutes." (36)
+
+5. Title: "[first_name]" (12)
+   Body: "You haven't been back in 7 days. No judgment. Just a flag." (58)
+
+6. Title: "Context you didn't ask for" (26)
+   Body: "People who do this on Tuesday see 47% better results by Friday." (62)
+
+7. Title: "New in ${v.context||'the app'}"
+   Body: "We changed one thing based on your usage data." (46)
+
+8. Title: "Tuesday reminder" (16)
+   Body: "The one you set last week. Still relevant?" (42)
+
+9. Title: "Short question" (14)
+   Body: "Is this still useful to you? Reply Y or N." (42)
+
+10. Title: "Done." (5)
+    Body: "Nothing to do. Just confirming you hit your mark." (49)`,
+
+    'sms-marketing': ()=>
+`8 SMS MESSAGES
+
+1. WELCOME
+"Hi [NAME], welcome to ${v.brand||prd}. Your first order unlocks 15% off. No code needed — applies automatically. [LINK]" (117 chars)
+
+2. SOFT PROMO
+"[NAME] — ${v.offer?(v.offer.split(',')[0].trim()+' just landed.'):'New batch just landed.'} Same quality. First 48 hours gets founding price. [LINK]" (147 chars)
+
+3. RESTOCK
+"The item you looked at is back. 31 units. No pressure. [LINK]" (61 chars)
+
+4. ABANDONED CART
+"[NAME], you left something. Cart's still there. We didn't touch it. [LINK]" (74 chars)
+
+5. VIP
+"You're in the top 11% of ${v.brand||prd} customers this year. Early access starts tomorrow. [LINK]" (98 chars)
+
+6. REVIEW REQUEST
+"One question, [NAME]: Was it what you expected? (Y/N) — your answer improves what we make next." (95 chars)
+
+7. RE-ENGAGEMENT
+"It's been a while. Nothing's changed except the lineup. [LINK]" (62 chars)
+
+8. ORDER STATUS
+"Order on its way, [NAME]. Arrives Thursday. Track here: [LINK]" (62 chars)`,
+
+    'linkedin-ads': ()=>
+`AD VARIATION 1
+Intro: "${hook} Here's a data point: ${aud} who switch to ${prd} report 34% faster ramp." (88 chars)
+Headline: "A different approach to ${prd.toLowerCase()}" (${(25+prd.length)} chars)
+Description: "Not a platform. A way of working that removes friction before it costs you." (75 chars)
+
+---
+
+AD VARIATION 2
+Intro: "Every ${aud} we've talked to in the last 6 months said the same thing: the tools aren't the problem. The workflow is." (117 chars)
+Headline: "${prd}: built for how ${aud.slice(0,18)} actually work" (${(35+aud.slice(0,18).length)} chars)
+Description: "${xtra||'14-day trial. No setup call required. Cancel in two clicks.'}" (68 chars)
+
+---
+
+AD VARIATION 3
+Intro: "Here's a specific number: ${aud} using ${prd} saved 6.3 hours/week on average in Q3." (85 chars)
+Headline: "The hours you spent on ${prd.toLowerCase()} last quarter" (${(24+prd.length)} chars)
+Description: "One free audit. We'll show you what's taking the most time before you commit." (77 chars)`,
+  };
+
+  return (T[s] ? T[s]() : `${hook}\n\n${prd} is built for ${aud}.\n\n${xtra||'The details are in the product. The copy just gets out of the way.'}\n\n[ PRODUCT ] → [ AUDIENCE ] → [ COPY THAT CONVERTS ]`);
+}
+</script>
+</body>
+</html>
