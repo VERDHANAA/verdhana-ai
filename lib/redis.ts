@@ -1,21 +1,25 @@
-// Upstash Redis REST API helper
-// Used for: caching AI responses, rate limiting
+// Upstash Redis REST API helper - hardened
+
+import { sha256 } from "./sanitize";
 
 const REDIS_URL = process.env.UPSTASH_REDIS_REST_URL;
 const REDIS_TOKEN = process.env.UPSTASH_REDIS_REST_TOKEN;
 
 async function redisCall(command: string[]) {
   if (!REDIS_URL || !REDIS_TOKEN) {
-    console.error("Upstash Redis not configured");
     return null;
   }
 
   try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 5000); // 5s timeout
+
     const res = await fetch(`${REDIS_URL}/${command.map(encodeURIComponent).join("/")}`, {
-      headers: {
-        Authorization: `Bearer ${REDIS_TOKEN}`,
-      },
+      headers: { Authorization: `Bearer ${REDIS_TOKEN}` },
+      signal: controller.signal,
     });
+
+    clearTimeout(timeout);
 
     if (!res.ok) {
       console.error("Redis error:", await res.text());
@@ -30,10 +34,6 @@ async function redisCall(command: string[]) {
   }
 }
 
-// ============================================
-// CACHE: store/get AI responses
-// ============================================
-
 export async function cacheGet(key: string): Promise<any | null> {
   const result = await redisCall(["GET", `cache:${key}`]);
   if (!result) return null;
@@ -47,9 +47,14 @@ export async function cacheGet(key: string): Promise<any | null> {
 export async function cacheSet(
   key: string,
   value: any,
-  ttlSeconds: number = 86400 // default 24 hours
+  ttlSeconds: number = 86400
 ): Promise<boolean> {
   const stringValue = typeof value === "string" ? value : JSON.stringify(value);
+  // Limit value size (Upstash limit: 1MB)
+  if (stringValue.length > 100000) {
+    console.warn("Cache value too large, skipping cache");
+    return false;
+  }
   const result = await redisCall([
     "SET",
     `cache:${key}`,
@@ -60,45 +65,33 @@ export async function cacheSet(
   return result === "OK";
 }
 
-// Generate cache key from product slug + inputs
-export function generateCacheKey(
+// SHA-256 cache key (collision-resistant)
+export async function generateCacheKey(
   slug: string,
   inputs: Record<string, string>,
   model: string,
   polish: boolean
-): string {
+): Promise<string> {
   const inputStr = Object.keys(inputs)
     .sort()
     .map((k) => `${k}=${(inputs[k] || "").trim().toLowerCase()}`)
     .join("|");
-  // Simple hash
-  let hash = 0;
-  const str = `${slug}::${model}::${polish ? "p" : ""}::${inputStr}`;
-  for (let i = 0; i < str.length; i++) {
-    hash = (hash << 5) - hash + str.charCodeAt(i);
-    hash |= 0;
-  }
-  return `${slug}:${Math.abs(hash).toString(36)}`;
+  const hash = await sha256(`${slug}::${model}::${polish ? "p" : ""}::${inputStr}`);
+  return `${slug}:${hash}`;
 }
-
-// ============================================
-// RATE LIMIT: fast counter
-// ============================================
 
 export async function rateLimitIncr(
   userId: string,
   type: "gen" | "polish" = "gen"
 ): Promise<number> {
-  const today = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
+  const today = new Date().toISOString().split("T")[0];
   const key = `rl:${type}:${userId}:${today}`;
 
-  // INCR returns new count
   const count = await redisCall(["INCR", key]);
-  if (count === null) return -1; // Redis failed, fallback to DB
+  if (count === null) return -1;
 
-  // Set expiry only on first increment (count === 1)
   if (count === 1) {
-    await redisCall(["EXPIRE", key, "86400"]); // 24 hours
+    await redisCall(["EXPIRE", key, "86400"]);
   }
 
   return typeof count === "number" ? count : parseInt(String(count), 10);
@@ -119,7 +112,6 @@ export async function rateLimitDecr(
   userId: string,
   type: "gen" | "polish" = "gen"
 ): Promise<void> {
-  // Used to rollback if generate fails
   const today = new Date().toISOString().split("T")[0];
   const key = `rl:${type}:${userId}:${today}`;
   await redisCall(["DECR", key]);
