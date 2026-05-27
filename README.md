@@ -1,155 +1,156 @@
-# Verdhana AI — Panduan Pemasangan Lengkap
+# Verdhana AI — Panduan Pemasangan di Android (Termux)
 
-> Panduan ini ditulis sesederhana mungkin. Ikuti satu per satu, jangan dilewat.
-
----
-
-## Sebelum Mulai — Apa yang Kamu Butuhkan?
-
-Bayangkan kamu mau masak. Sebelum masak, kamu perlu bahan-bahan dulu.
-Nah, sebelum menjalankan aplikasi ini, kamu perlu **4 bahan** berikut:
-
-| Bahan | Untuk apa | Biaya |
-|---|---|---|
-| **Node.js** | "Mesin" yang menjalankan aplikasi ini di komputermu | Gratis |
-| **OpenRouter** | Layanan AI yang menghasilkan copy/teks | Ada free tier |
-| **Supabase** | Tempat menyimpan data pengguna (login, daftar, dll) | Gratis |
-| **Vercel** | Tempat "upload" aplikasimu ke internet | Gratis |
+> Panduan ini khusus untuk pengguna Android yang memakai Termux.
+> Ikuti urutan langkahnya, jangan dilewat satu pun.
 
 ---
 
-## BAGIAN 1 — Siapkan Komputer Kamu
+## Apa itu Termux?
 
-### Langkah 1 · Pasang Node.js
+Termux adalah aplikasi Android yang berfungsi seperti terminal/command prompt
+di komputer. Dengan Termux, kamu bisa menjalankan aplikasi berbasis kode
+langsung dari HP Android.
 
-Node.js itu ibarat "mesin" — tanpa ini aplikasinya tidak bisa jalan sama sekali.
+---
 
-1. Buka browser, pergi ke **nodejs.org**
-2. Klik tombol besar bertuliskan **"LTS"** (jangan yang "Current")
-3. Download file-nya, lalu buka dan install seperti install aplikasi biasa
-4. Klik Next → Next → Install → Finish
+## BAGIAN 1 — Siapkan Termux
 
-**Cara cek apakah berhasil:**
-Buka Terminal (Mac/Linux) atau Command Prompt (Windows), ketik:
+### Langkah 1 · Install Termux yang Benar
+
+> ⚠️ Jangan install Termux dari Play Store — versinya sudah usang dan
+> tidak diupdate lagi. Pakai F-Droid.
+
+1. Buka browser di HP-mu, pergi ke **f-droid.org**
+2. Download aplikasi F-Droid, install (izinkan "install dari sumber tidak dikenal")
+3. Buka F-Droid → cari **"Termux"**
+4. Install Termux dari F-Droid
+
+---
+
+### Langkah 2 · Update Termux Setelah Pertama Kali Dibuka
+
+Buka Termux, lalu ketik perintah ini dan tekan Enter:
+
+```bash
+pkg update && pkg upgrade
 ```
+
+Kalau muncul pertanyaan `[Y/n]` → ketik `Y` lalu Enter.
+Tunggu sampai selesai (bisa 2–5 menit tergantung internet).
+
+---
+
+### Langkah 3 · Izinkan Termux Akses Penyimpanan HP
+
+Supaya Termux bisa baca/tulis file di HP-mu:
+
+```bash
+termux-setup-storage
+```
+
+Akan muncul popup izin di HP → pilih **"Izinkan"** / **"Allow"**.
+
+---
+
+### Langkah 4 · Install Node.js dan Git
+
+Dua alat ini wajib ada. Ketik perintah berikut:
+
+```bash
+pkg install nodejs git
+```
+
+Kalau muncul pertanyaan `[Y/n]` → ketik `Y` lalu Enter.
+Tunggu sampai selesai.
+
+**Cek apakah berhasil:**
+```bash
 node --version
+git --version
 ```
-Kalau muncul angka seperti `v20.11.0`, berarti berhasil. ✅
+
+Kalau muncul angka versi seperti `v20.x.x` dan `git version 2.x.x` → berhasil ✅
 
 ---
 
-### Langkah 2 · Download Kode Aplikasinya
+## BAGIAN 2 — Download Kode Aplikasi
 
-Kamu perlu mengambil kode aplikasi ini ke komputermu.
+### Langkah 5 · Clone Repository
 
-**Cara paling mudah — pakai Git:**
-
-1. Buka Terminal / Command Prompt
-2. Ketik perintah berikut (ganti `URL_REPO` dengan link repository GitHub-mu):
+Ganti `URL_REPO` dengan link GitHub repository-mu:
 
 ```bash
 git clone URL_REPO
 ```
 
-3. Setelah selesai, masuk ke folder-nya:
+Contoh:
+```bash
+git clone https://github.com/namakamu/verdhana-ai.git
+```
+
+Setelah selesai, masuk ke folder aplikasi:
 
 ```bash
 cd verdhana-ai
 ```
 
-> **Tidak tahu cara pakai Terminal?**
-> Di Windows: tekan tombol `Windows + R`, ketik `cmd`, tekan Enter.
-> Di Mac: tekan `Command + Spasi`, ketik `terminal`, tekan Enter.
-
 ---
 
-### Langkah 3 · Install Semua Paket yang Dibutuhkan
-
-Masih di dalam Terminal, ketik:
+### Langkah 6 · Install Semua Paket
 
 ```bash
 npm install
 ```
 
-Tunggu sampai selesai. Ini akan mendownload semua "bahan pendukung" aplikasi.
-Prosesnya sekitar 1–3 menit tergantung kecepatan internet.
+Tunggu sampai selesai. Di HP proses ini bisa lebih lama dari komputer,
+sekitar 3–10 menit. Jangan panik kalau lama.
 
-Kalau sudah selesai, lanjut ke bagian berikutnya.
-
----
-
-## BAGIAN 2 — Buat Akun di Layanan yang Dibutuhkan
-
-Aplikasi ini butuh beberapa layanan luar. Masing-masing harus kamu daftar sendiri
-dan ambil "kunci API"-nya. Kunci API itu seperti **password rahasia** yang
-membuktikan bahwa kamu punya izin pakai layanan itu.
+> Kalau muncul error `ENOMEM` (kehabisan memori), coba tutup semua
+> aplikasi lain di HP lalu jalankan ulang `npm install`.
 
 ---
 
-### Langkah 4 · Buat API Key OpenRouter (WAJIB — ini yang bikin AI-nya jalan)
+## BAGIAN 3 — Buat Akun di Layanan yang Dibutuhkan
 
-OpenRouter adalah "jembatan" antara aplikasimu dan berbagai model AI.
-
-1. Buka **openrouter.ai** di browser
-2. Klik **"Sign In"** → daftar pakai Google atau email
-3. Setelah masuk, klik foto profil di pojok kanan atas
-4. Pilih **"API Keys"**
-5. Klik tombol **"Create Key"**
-6. Beri nama bebas, misalnya `verdhana-ai`
-7. **Salin kuncinya** — bentuknya seperti `sk-or-v1-xxxxxxxx`
-
-> ⚠️ Simpan kunci ini baik-baik. Kalau hilang, kamu harus buat yang baru.
-> Jangan bagikan kunci ini ke siapapun.
-
-**Isi saldo OpenRouter (opsional untuk mulai):**
-- Buka menu **"Credits"**
-- Isi saldo minimal $5 untuk mulai (bisa pakai kartu kredit/PayPal)
-- Tanpa saldo, AI-nya tidak akan menjawab
+Buka browser di HP-mu untuk mendaftar ke layanan-layanan berikut.
 
 ---
 
-### Langkah 5 · Buat Project Supabase (untuk Login & Database)
+### Langkah 7 · Buat API Key OpenRouter *(WAJIB — ini yang bikin AI jalan)*
 
-Supabase adalah tempat menyimpan data pengguna — siapa saja yang sudah daftar,
-password mereka, dll. Ibaratnya ini adalah "lemari arsip" aplikasimu.
+1. Buka **openrouter.ai**
+2. Daftar pakai Google atau email
+3. Setelah masuk → klik foto profil → **"API Keys"**
+4. Klik **"Create Key"** → beri nama bebas → salin kuncinya
 
-1. Buka **supabase.com** di browser
-2. Klik **"Start your project"** → daftar pakai GitHub atau email
-3. Setelah masuk, klik **"New project"**
-4. Isi formulir:
-   - **Organization**: nama organisasimu (bebas)
-   - **Name**: `verdhana-ai` (bebas)
-   - **Database Password**: buat password yang kuat, **simpan baik-baik**
-   - **Region**: pilih yang paling dekat denganmu (misal: Singapore)
-5. Klik **"Create new project"**
-6. Tunggu sekitar 1–2 menit sampai proyeknya siap
+Bentuknya: `sk-or-v1-xxxxxxxxxxxxxxxx`
 
-**Ambil kunci Supabase:**
-1. Di sidebar kiri, klik ikon gerigi ⚙️ **"Project Settings"**
-2. Klik **"API"**
-3. Kamu akan melihat dua hal yang perlu disalin:
-   - **Project URL** → bentuknya `https://xxxxxx.supabase.co`
-   - **anon public** → kunci panjang yang dimulai dengan `eyJ...`
+> Tanpa kunci ini, fitur AI tidak akan berfungsi sama sekali.
 
 ---
 
-### Langkah 6 · Buat Database Table di Supabase
+### Langkah 8 · Buat Project Supabase *(untuk Login & Database)*
 
-Ini ibarat membuat "laci-laci" di dalam lemari arsip tadi.
+1. Buka **supabase.com**
+2. Daftar pakai GitHub atau email
+3. Klik **"New project"**
+4. Isi: nama project `verdhana-ai`, buat password database, pilih region **Singapore**
+5. Tunggu 1–2 menit sampai project siap
+6. Pergi ke **Settings → API**, salin dua hal:
+   - **Project URL** → `https://xxxxxx.supabase.co`
+   - **anon public** → kunci panjang `eyJxxxx...`
 
-1. Di Supabase, klik menu **"SQL Editor"** di sidebar kiri
-2. Klik **"New query"**
-3. Copy-paste kode SQL berikut ke dalam kolom editor:
+**Buat tabel database:**
+1. Di Supabase → klik **"SQL Editor"** → **"New query"**
+2. Copy-paste kode ini:
 
 ```sql
--- Tabel untuk menyimpan data pengguna
 create table if not exists public.users (
   id uuid references auth.users on delete cascade primary key,
   email text,
   created_at timestamp with time zone default now()
 );
 
--- Izin akses
 alter table public.users enable row level security;
 
 create policy "Users can view own data"
@@ -157,205 +158,213 @@ create policy "Users can view own data"
   using (auth.uid() = id);
 ```
 
-4. Klik tombol **"Run"** (atau tekan `Ctrl + Enter`)
-5. Kalau muncul tulisan "Success", berarti berhasil ✅
+3. Klik **"Run"** → muncul "Success" ✅
 
 ---
 
-### Langkah 7 · Buat Akun Upstash Redis (untuk Membatasi Penggunaan)
+### Langkah 9 · Buat Database Upstash Redis *(untuk Pembatas Penggunaan)*
 
-Upstash digunakan agar satu pengguna tidak bisa pakai AI berkali-kali tanpa batas
-(rate limiting). Ibaratnya ini adalah "petugas antrian".
-
-1. Buka **upstash.com** di browser
-2. Klik **"Sign Up"** → daftar pakai Google
-3. Setelah masuk, klik **"Create database"**
-4. Pilih:
-   - **Name**: `verdhana-ai`
-   - **Type**: Regional
-   - **Region**: pilih yang dekat (misal: `ap-southeast-1` untuk Asia Tenggara)
-5. Klik **"Create"**
-6. Setelah database terbuat, scroll ke bawah ke bagian **"REST API"**
-7. Salin dua hal:
-   - **UPSTASH\_REDIS\_REST\_URL** → link `https://...upstash.io`
-   - **UPSTASH\_REDIS\_REST\_TOKEN** → kunci panjang
+1. Buka **upstash.com**
+2. Daftar pakai Google
+3. Klik **"Create database"** → nama `verdhana-ai` → region **Singapore**
+4. Setelah dibuat, scroll ke bagian **"REST API"**, salin:
+   - **URL** → `https://xxxxx.upstash.io`
+   - **Token** → kunci panjang
 
 ---
 
-### Langkah 8 · Buat Akun Resend (untuk Kirim Email Otomatis)
+### Langkah 10 · Buat API Key Resend *(untuk Kirim Email Otomatis)*
 
-Resend digunakan untuk kirim email selamat datang ke pengguna baru.
-
-1. Buka **resend.com** di browser
-2. Klik **"Sign Up"** → daftar pakai GitHub atau email
-3. Setelah masuk, klik **"API Keys"** di sidebar
-4. Klik **"Create API Key"**
-5. Beri nama `verdhana-ai`, klik **"Add"**
-6. Salin kuncinya — bentuknya `re_xxxxxxxx`
-
-> Kalau kamu belum punya domain sendiri, Resend hanya bisa kirim ke
-> email kamu sendiri (mode testing). Itu sudah cukup untuk tahap awal.
+1. Buka **resend.com**
+2. Daftar pakai GitHub atau email
+3. Klik **"API Keys"** → **"Create API Key"**
+4. Salin kuncinya → bentuknya `re_xxxxxxxx`
 
 ---
 
-## BAGIAN 3 — Hubungkan Semua Kunci ke Aplikasi
+## BAGIAN 4 — Isi Kunci Rahasia
 
-### Langkah 9 · Buat File `.env.local`
+### Langkah 11 · Buat File `.env.local` di Termux
 
-File ini adalah tempat menyimpan semua "kunci rahasia" tadi.
-Aplikasi akan membaca file ini setiap kali dijalankan.
+Kembali ke Termux. Pastikan kamu sudah di dalam folder `verdhana-ai`.
+Kalau belum, ketik dulu:
 
-1. Di dalam folder `verdhana-ai`, buat file baru bernama **`.env.local`**
-   (perhatikan ada titik di depan nama file)
+```bash
+cd verdhana-ai
+```
 
-2. Isi file tersebut seperti ini — ganti bagian `xxxxx` dengan kunci milikmu:
+Buat file `.env.local` menggunakan editor `nano`:
+
+```bash
+nano .env.local
+```
+
+Layar akan berubah menjadi editor teks. Ketik atau paste isinya:
 
 ```
-# Kunci OpenRouter (AI)
 OPENROUTER_API_KEY=sk-or-v1-xxxxx
-
-# Kunci Supabase
 NEXT_PUBLIC_SUPABASE_URL=https://xxxxx.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJxxxxx
-
-# Kunci Upstash Redis
 UPSTASH_REDIS_REST_URL=https://xxxxx.upstash.io
 UPSTASH_REDIS_REST_TOKEN=AYxxxxx
-
-# Kunci Resend (email)
 RESEND_API_KEY=re_xxxxx
 ```
 
-3. Simpan file-nya
+Ganti semua `xxxxx` dengan kunci milikmu.
 
-> ⚠️ File `.env.local` JANGAN di-upload ke GitHub atau dibagikan ke siapapun.
-> File ini sudah otomatis diabaikan oleh Git (ada di `.gitignore`).
+**Cara paste di Termux:** tahan layar beberapa detik → pilih **"Paste"**
+
+**Cara simpan file di nano:**
+1. Tekan `Ctrl + X`
+2. Muncul pertanyaan "Save?" → tekan `Y`
+3. Tekan `Enter`
+
+File tersimpan ✅
 
 ---
 
-## BAGIAN 4 — Jalankan Aplikasinya!
+## BAGIAN 5 — Jalankan Aplikasi
 
-### Langkah 10 · Jalankan di Komputer (Mode Development)
-
-Ini untuk melihat tampilan aplikasimu di komputer sendiri dulu,
-sebelum di-upload ke internet.
-
-1. Buka Terminal, pastikan kamu masih di folder `verdhana-ai`
-2. Ketik:
+### Langkah 12 · Jalankan di HP (Mode Development)
 
 ```bash
 npm run dev
 ```
 
-3. Tunggu beberapa detik sampai muncul tulisan:
-   ```
-   ▲ Next.js 14.x.x
-   - Local:   http://localhost:3000
-   ```
+Tunggu sampai muncul:
+```
+▲ Next.js 14.x.x
+- Local:   http://localhost:3000
+```
 
-4. Buka browser, ketik **`localhost:3000`** di address bar
-5. Aplikasimu sudah jalan! 🎉
+Sekarang buka browser di HP-mu, ketik:
+```
+localhost:3000
+```
 
-**Untuk menghentikan aplikasi:** tekan `Ctrl + C` di Terminal.
+Aplikasinya jalan di HP-mu! 🎉
+
+**Untuk menghentikan:** tekan `Ctrl + C` di Termux.
+
+> **Catatan:** Selama `npm run dev` berjalan, jangan tutup Termux.
+> Kalau Termux tertutup, aplikasi berhenti. Untuk membiarkan berjalan
+> di background, geser Termux ke belakang (jangan tutup).
 
 ---
 
-## BAGIAN 5 — Upload ke Internet (Deploy ke Vercel)
+## BAGIAN 6 — Upload ke Internet (Deploy ke Vercel)
 
-Sejauh ini aplikasi hanya bisa diakses dari komputermu sendiri.
-Agar orang lain bisa mengaksesnya, kamu perlu "upload" ke Vercel.
+Supaya orang lain bisa mengakses aplikasimu, deploy ke Vercel.
 
-### Langkah 11 · Upload Kode ke GitHub
+### Langkah 13 · Siapkan Akun GitHub dan Push Kode
 
-Kalau kodenya belum ada di GitHub:
+Kalau belum punya akun GitHub:
+1. Buka **github.com** → daftar
+2. Buat repository baru bernama `verdhana-ai` (pilih Private)
 
-1. Buka **github.com** → Login → Klik tombol **"+"** di pojok kanan atas
-2. Pilih **"New repository"**
-3. Beri nama `verdhana-ai`, pilih **Private**, klik **"Create repository"**
-4. Di Terminal, jalankan perintah berikut satu per satu:
+Konfigurasi Git di Termux (ganti dengan data milikmu):
 
 ```bash
-git remote add origin https://github.com/USERNAME_KAMU/verdhana-ai.git
-git branch -M main
+git config --global user.email "emailkamu@gmail.com"
+git config --global user.name "Nama Kamu"
+```
+
+Hubungkan dan upload kode:
+
+```bash
+git remote set-url origin https://github.com/USERNAME/verdhana-ai.git
+git add .
+git commit -m "first deploy"
 git push -u origin main
 ```
 
-Ganti `USERNAME_KAMU` dengan username GitHub-mu.
+Saat diminta username/password GitHub:
+- Username: username GitHub-mu
+- Password: **bukan password biasa** — kamu perlu buat **Personal Access Token**
+
+**Cara buat Personal Access Token GitHub:**
+1. Di GitHub → klik foto profil → **Settings**
+2. Scroll paling bawah → **Developer settings**
+3. **Personal access tokens → Tokens (classic)**
+4. Klik **"Generate new token (classic)"**
+5. Centang **repo**, scroll bawah → **"Generate token"**
+6. Salin tokennya (hanya muncul sekali!)
+7. Gunakan token ini sebagai "password" saat git push
 
 ---
 
-### Langkah 12 · Deploy ke Vercel
+### Langkah 14 · Deploy ke Vercel
 
-1. Buka **vercel.com** di browser
-2. Klik **"Sign Up"** → Login dengan GitHub
+1. Buka **vercel.com** di browser HP
+2. Login dengan GitHub
 3. Klik **"Add New → Project"**
-4. Cari repository `verdhana-ai` → klik **"Import"**
-5. Di halaman konfigurasi, **jangan ubah apapun dulu**
-6. Klik **"Deploy"**
-
-Vercel akan mulai proses build. Tunggu sekitar 2–3 menit.
-
-> Kalau build **GAGAL** karena missing environment variables — itu normal!
-> Lanjut ke langkah berikutnya.
+4. Pilih repository `verdhana-ai` → klik **"Import"**
+5. Klik **"Deploy"** (biarkan semua default)
 
 ---
 
-### Langkah 13 · Tambahkan Kunci Rahasia ke Vercel
+### Langkah 15 · Tambahkan Kunci Rahasia ke Vercel
 
-Ini penting — tanpa ini aplikasinya tidak akan bekerja di internet.
-
-1. Setelah deploy selesai (sukses atau gagal), buka **dashboard Vercel**
-2. Klik proyek `verdhana-ai`
-3. Klik tab **"Settings"** di menu atas
-4. Di sidebar kiri, klik **"Environment Variables"**
-5. Tambahkan satu per satu semua kunci dari file `.env.local` tadi:
+1. Di dashboard Vercel → klik proyek `verdhana-ai`
+2. Klik **"Settings"** → **"Environment Variables"**
+3. Tambahkan satu per satu:
 
 | Name | Value |
 |---|---|
-| `OPENROUTER_API_KEY` | `sk-or-v1-xxxxx` (isi kunci-mu) |
-| `NEXT_PUBLIC_SUPABASE_URL` | `https://xxxxx.supabase.co` |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | `eyJxxxxx` |
-| `UPSTASH_REDIS_REST_URL` | `https://xxxxx.upstash.io` |
-| `UPSTASH_REDIS_REST_TOKEN` | `AYxxxxx` |
-| `RESEND_API_KEY` | `re_xxxxx` |
+| `OPENROUTER_API_KEY` | kunci OpenRouter-mu |
+| `NEXT_PUBLIC_SUPABASE_URL` | URL Supabase-mu |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | anon key Supabase-mu |
+| `UPSTASH_REDIS_REST_URL` | URL Upstash-mu |
+| `UPSTASH_REDIS_REST_TOKEN` | token Upstash-mu |
+| `RESEND_API_KEY` | kunci Resend-mu |
 
-6. Setelah semua diisi, klik **"Save"**
-7. Kembali ke tab **"Deployments"**
-8. Klik tombol **"..."** di deployment terbaru → pilih **"Redeploy"**
-9. Tunggu sampai selesai
+4. Klik **"Save"**
+5. Kembali ke **"Deployments"** → klik **"..."** → **"Redeploy"**
 
-Sekarang aplikasimu sudah online dengan URL seperti:
-`https://verdhana-ai-xxxx.vercel.app` 🌐
+Aplikasimu sekarang bisa diakses siapa saja lewat link Vercel! 🌐
 
 ---
 
-## Selesai! Ringkasan Akhir
+## Masalah Umum di Termux
 
-Kalau semua langkah sudah dilakukan, ini yang sudah kamu punya:
+**`npm install` error: `ENOMEM`**
+→ HP kehabisan RAM. Tutup semua aplikasi lain, coba lagi.
 
-- ✅ Aplikasi jalan di komputer (`localhost:3000`)
-- ✅ Aplikasi live di internet (link Vercel)
-- ✅ AI bisa menghasilkan copy marketing (OpenRouter)
-- ✅ Pengguna bisa daftar dan login (Supabase)
-- ✅ Email selamat datang terkirim otomatis (Resend)
-- ✅ Ada pembatas penggunaan (Upstash Redis)
+**`npm install` sangat lama atau hang**
+→ Tambahkan flag ini: `npm install --legacy-peer-deps`
+
+**`git push` minta password terus**
+→ Simpan kredensial agar tidak ditanya terus:
+```bash
+git config --global credential.helper store
+```
+Lalu push sekali lagi dengan memasukkan username + token. Selanjutnya tidak akan ditanya lagi.
+
+**Termux tertutup sendiri saat `npm run dev`**
+→ Aktifkan "Acquire Wakelock" di notifikasi Termux agar tidak dimatikan sistem.
+
+**Layar Termux terlalu kecil, susah ketik**
+→ Instal keyboard **Hacker's Keyboard** dari Play Store — ada tombol Ctrl, Tab, dan tanda baca lengkap.
 
 ---
 
-## Pertanyaan yang Sering Ditanyakan
+## Ringkasan Perintah Penting
 
-**Q: Muncul error "Module not found" saat `npm install`**
-A: Hapus folder `node_modules` dan file `package-lock.json`, lalu jalankan `npm install` lagi.
+```bash
+# Masuk ke folder proyek
+cd verdhana-ai
 
-**Q: AI tidak menjawab, muncul error**
-A: Cek apakah `OPENROUTER_API_KEY` sudah diisi dengan benar di file `.env.local`.
-Cek juga saldo di dashboard OpenRouter.
+# Jalankan aplikasi
+npm run dev
 
-**Q: Halaman login/signup tidak bisa dipakai**
-A: Pastikan `NEXT_PUBLIC_SUPABASE_URL` dan `NEXT_PUBLIC_SUPABASE_ANON_KEY` sudah diisi dengan benar.
+# Buka aplikasi di browser HP
+# → ketik localhost:3000 di browser
 
-**Q: Perubahan di kode tidak muncul di Vercel**
-A: Jalankan `git add . && git commit -m "update" && git push`. Vercel otomatis rebuild setiap kali ada push ke GitHub.
+# Upload perubahan ke GitHub
+git add .
+git commit -m "pesan perubahan"
+git push
+```
 
 ---
 
