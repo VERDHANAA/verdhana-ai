@@ -1,0 +1,55 @@
+@import "tailwindcss";
+
+@theme inline {
+  --color-brand-bg: #FFFAF3;
+  --color-brand-accent: #FF6B00;
+  --color-brand-black: #000000;
+  --color-brand-white: #FFFFFF;
+  --color-card-yellow: #FDC800;
+  --color-card-green: #A3E636;
+  --color-card-pink: #FF9F9F;
+  --color-card-blue: #88AAEE;
+  --color-card-purple: #A388EE;
+  --color-cream-base: #F9F7F2;
+  --color-electric-cyan: #00F0FF;
+  --color-deep-violet: #5D26C1;
+  --color-ink-black: #0D0D0D;
+
+  --shadow-neo: 4px 4px 0px #000;
+  --shadow-neobrutal: 8px 8px 0px 0px #0D0D0D;
+  --shadow-neo-lg: 6px 6px 0px #000;
+  --shadow-neo-sm: 2px 2px 0px #000;
+
+  --font-sans: var(--font-space-grotesk);
+  --font-grotesk: var(--font-space-grotesk);
+
+  --radius-neo: 5px;
+}
+
+:root {
+  --background: #FFFAF3;
+  --foreground: #000000;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.neobrutal-shadow {
+  box-shadow: 8px 8px 0px 0px #0D0D0D;
+}
+
+.animate-entrance {
+  opacity: 0;
+  animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.delay-200 { animation-delay: 200ms; }
+.delay-300 { animation-delay: 300ms; }
+.delay-400 { animation-delay: 400ms; }
