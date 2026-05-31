@@ -187,7 +187,7 @@ export default function LandingPage() {
                 {abbr:"SM",name:"SMS Marketing",role:"SMS ENGINEER",bg:"#F9F7F2",offset:false},
                 {abbr:"LI",name:"LinkedIn Ads",role:"B2B ANALYST",bg:"#00F0FF",offset:true},
               ].map((sp,i)=>(
-                <Link key={sp.name} href={`/dashboard/${sp.name.toLowerCase().replace(/[\s.]+/g,'-')}`}
+                <Link key={sp.name} href={`/dashboard/${sp.name.toLowerCase().replace(/[\s.]+/g,'-').replace(/-+$/,'')}`}
                   className="hover-neo"
                   style={{background:sp.bg,border:"4px solid #0D0D0D",padding:12,boxShadow:"8px 8px 0px 0px #0D0D0D",textDecoration:"none",color:"#0D0D0D",display:"block",transform:sp.offset?"translateY(16px)":"none"}}>
                   <div style={{aspectRatio:"1",background:"#0D0D0D",marginBottom:12,border:"4px solid #0D0D0D",display:"flex",alignItems:"center",justifyContent:"center",overflow:"hidden"}}>

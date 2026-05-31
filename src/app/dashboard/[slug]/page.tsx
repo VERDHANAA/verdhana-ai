@@ -7,6 +7,20 @@ import { Card } from "@/components/ui/Card";
 import { CardColor } from "@/components/ui/Card";
 
 const specialistData: Record<string, { name: string; icon: string; desc: string; color: CardColor; placeholder: string }> = {
+  // Channel-based specialists (linked from dashboard and landing page)
+  "facebook-ads": { name: "Facebook Ads Writer", icon: "📣", desc: "High-converting copy with 3 angle variations", color: "yellow", placeholder: "Example: Write a Facebook ad for a natural skincare product, targeting women 25-35, budget $50/day..." },
+  "tiktok-scripts": { name: "TikTok Ad Scripts", icon: "📱", desc: "Scripts that hold attention past 3 seconds", color: "blue", placeholder: "Example: Write a 15-second TikTok ad script for a health drink targeting Gen Z..." },
+  "google-ads": { name: "Google Ads Headlines", icon: "🔍", desc: "15 headlines under 30 chars for CTR", color: "green", placeholder: "Example: Write 15 Google Ads headlines for a web development agency targeting SMBs..." },
+  "instagram": { name: "Instagram Captions", icon: "📸", desc: "Captions that earn comments, not scrolls", color: "pink", placeholder: "Example: Write 5 Instagram captions for a local beauty brand, playful and empowering tone..." },
+  "email-marketing": { name: "Email Marketing", icon: "📧", desc: "Reads like a human, not a brand template", color: "yellow", placeholder: "Example: Write a subject line and email blast for a 24-hour flash sale on fashion items..." },
+  "youtube-titles": { name: "YouTube Titles", icon: "▶️", desc: "Titles that earn clicks honestly", color: "green", placeholder: "Example: Write 10 YouTube titles for a flagship smartphone review video..." },
+  "product-desc": { name: "Product Descriptions", icon: "🛍️", desc: "Like a knowledgeable shop owner wrote it", color: "blue", placeholder: "Example: Write a product description for a premium handmade leather bag targeting upscale buyers..." },
+  "video-scripts": { name: "Video Ad Scripts", icon: "🎬", desc: "30s, 60s, 90s for Meta & YouTube", color: "purple", placeholder: "Example: Write a 30-second video ad script for a food delivery app using storytelling..." },
+  "landing-pages": { name: "Landing Page Copy", icon: "🌐", desc: "Full page from hero to FAQ", color: "pink", placeholder: "Example: Write landing page copy for an online digital marketing course targeting beginners..." },
+  "push-notifs": { name: "Push Notifications", icon: "🔔", desc: "Messages people don't immediately delete", color: "yellow", placeholder: "Example: Write 10 push notifications for an e-commerce app, flash sale category..." },
+  "sms-marketing": { name: "SMS Marketing", icon: "💬", desc: "Campaigns that don't feel like spam", color: "green", placeholder: "Example: Write an SMS campaign for a Eid sale at a fashion store, max 160 chars..." },
+  "linkedin-ads": { name: "LinkedIn Ads", icon: "💼", desc: "B2B copy that respects the reader's time", color: "blue", placeholder: "Example: Write a LinkedIn ad for an HR SaaS tool targeting HR managers at 50+ employee companies..." },
+  // Role-based specialists
   "copywriter": { name: "Copywriter AI", icon: "✍️", desc: "Spesialis copy iklan & landing page", color: "yellow", placeholder: "Contoh: Buat headline untuk iklan Facebook produk skincare natural untuk wanita 25-35 tahun..." },
   "analis-pasar": { name: "Analis Pasar", icon: "📊", desc: "Riset kompetitor & tren pasar", color: "green", placeholder: "Contoh: Analisis kompetitor brand kopi premium di Indonesia, fokus pada strategi pricing..." },
   "strategi-konten": { name: "Strategi Konten", icon: "🎯", desc: "Kalender konten & content plan", color: "pink", placeholder: "Contoh: Buat content plan 30 hari untuk brand fashion lokal di Instagram..." },
