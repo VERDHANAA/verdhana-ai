@@ -1,6 +1,3 @@
 node_modules/
-.next/
-.vercel/
-stitch-files/
-*.env*
-.env.local
+debug-storybook.log
+storybook-static/
