@@ -93,10 +93,15 @@ export default function AccountPage() {
           <p style={{ fontSize: 16, fontWeight: 600, color: "#37352F", wordBreak: "break-all", marginBottom: 16 }}>
             {user?.email}
           </p>
-          <button style={{
-            background: "none", border: "none", cursor: "pointer", fontSize: 13,
-            color: "#787774", fontWeight: 500, textDecoration: "underline", padding: 0,
-          }}>
+          <button
+            disabled
+            title="Coming soon"
+            style={{
+              background: "none", border: "none", cursor: "not-allowed", fontSize: 13,
+              color: "#787774", fontWeight: 500, textDecoration: "underline", padding: 0,
+              opacity: 0.5,
+            }}
+          >
             Update email
           </button>
         </div>

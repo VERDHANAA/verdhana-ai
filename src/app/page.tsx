@@ -156,6 +156,9 @@ export default function LandingPage() {
         <style>{`
           @media (max-width: 768px) { .specialists-grid { grid-template-columns: repeat(2, 1fr) !important; } }
           @media (max-width: 480px) { .specialists-grid { grid-template-columns: 1fr 1fr !important; } }
+          @media (max-width: 600px) { .compare-grid { grid-template-columns: 1fr !important; } }
+          @media (max-width: 600px) { .compare-grid > div:first-child { border-right: none !important; border-bottom: 1px solid #E8E6E1; } }
+          @media (max-width: 768px) { .footer-grid { grid-template-columns: 1fr !important; gap: 28px !important; } }
         `}</style>
       </section>
 
@@ -167,7 +170,7 @@ export default function LandingPage() {
         <div style={{
           display: "grid", gridTemplateColumns: "1fr 1fr", border: "1px solid #E8E6E1",
           borderRadius: 8, overflow: "hidden",
-        }}>
+        }} className="compare-grid">
           <div style={{ padding: 32, background: "#ffffff", borderRight: "1px solid #E8E6E1" }}>
             <h3 style={{ fontSize: 16, fontWeight: 600, color: "#787774", marginBottom: 20 }}>Standard AI</h3>
             <ul style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: 12 }}>
@@ -218,7 +221,7 @@ export default function LandingPage() {
               {openFaq === i && (
                 <div style={{
                   padding: "0 20px 16px", fontSize: 14, color: "#787774", lineHeight: 1.6,
-                  borderTop: "1px solid #E8E6E1",paddingTop: 16,
+                  borderTop: "1px solid #E8E6E1", paddingTop: 16,
                 }}>
                   {faq.a}
                 </div>
@@ -231,7 +234,7 @@ export default function LandingPage() {
       {/* FOOTER */}
       <footer style={{ background: "#1A1A1A", color: "#ffffff", padding: "48px 24px" }}>
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
-          <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr", gap: 40, marginBottom: 40 }}>
+          <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr", gap: 40, marginBottom: 40 }} className="footer-grid">
             <div>
               <div style={{ fontSize: 18, fontWeight: 700, marginBottom: 12 }}>Verdhana AI</div>
               <p style={{ fontSize: 13, color: "rgba(255,255,255,0.5)", lineHeight: 1.6, maxWidth: 280 }}>

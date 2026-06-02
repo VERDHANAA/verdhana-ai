@@ -1,6 +1,7 @@
 "use client";
 
 import { use, useState } from "react";
+import Link from "next/link";
 
 const specialistData: Record<string, { name: string; icon: string; desc: string; placeholder: string }> = {
   // Channel-based specialists (linked from dashboard and landing page)
@@ -88,9 +89,9 @@ export default function SlugPage({ params }: { params: Promise<{ slug: string }>
         background: "#ffffff", borderBottom: "1px solid #E8E6E1",
         padding: "0 24px", height: 52, display: "flex", alignItems: "center", gap: 16,
       }}>
-        <a href="/dashboard" style={{ fontSize: 13, color: "#787774", textDecoration: "none", fontWeight: 500 }}>
+        <Link href="/dashboard" style={{ fontSize: 13, color: "#787774", textDecoration: "none", fontWeight: 500 }}>
           ← Dashboard
-        </a>
+        </Link>
         <span style={{ color: "#E8E6E1" }}>|</span>
         <span style={{ fontSize: 13, color: "#37352F", fontWeight: 500 }}>
           {specialist.icon} {specialist.name}
