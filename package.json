@@ -4,6 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
     "test": "echo \"Error: no test specified\" && exit 1",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
@@ -12,20 +16,41 @@
   "author": "",
   "license": "ISC",
   "type": "module",
+  "dependencies": {
+    "@supabase/ssr": "^0.10.3",
+    "@supabase/supabase-js": "^2.50.0",
+    "@tailwindcss/postcss": "^4.3.0",
+    "next": "^15.3.3",
+    "openai": "^6.41.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "tailwindcss": "^4.3.0"
+  },
   "devDependencies": {
-    "react": "^19.2.6",
-    "react-dom": "^19.2.6",
-    "storybook": "^10.4.1",
-    "@storybook/react-vite": "^10.4.1",
     "@chromatic-com/storybook": "^5.2.1",
-    "@storybook/addon-vitest": "^10.4.1",
     "@storybook/addon-a11y": "^10.4.1",
     "@storybook/addon-docs": "^10.4.1",
     "@storybook/addon-mcp": "^0.6.0",
-    "prop-types": "^15.8.1",
-    "vitest": "^4.1.8",
-    "playwright": "^1.60.0",
+    "@storybook/addon-vitest": "^10.4.1",
+    "@storybook/react-vite": "^10.4.1",
+    "@types/node": "^22.19.19",
+    "@types/react": "^19.2.16",
+    "@types/react-dom": "^19.2.3",
     "@vitest/browser-playwright": "^4.1.8",
-    "@vitest/coverage-v8": "^4.1.8"
+    "@vitest/coverage-v8": "^4.1.8",
+    "eslint": "^10.4.1",
+    "eslint-config-next": "^16.2.7",
+    "playwright": "^1.60.0",
+    "prop-types": "^15.8.1",
+    "react": "^19.2.6",
+    "react-dom": "^19.2.6",
+    "storybook": "^10.4.1",
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.8"
+  },
+  "allowScripts": {
+    "esbuild@0.27.7": true,
+    "sharp@0.34.5": true,
+    "unrs-resolver@1.12.2": true
   }
 }
