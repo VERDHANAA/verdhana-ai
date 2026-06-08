@@ -228,7 +228,7 @@ export default function AccountPage() {
       </main>
 
       {/* Bottom nav mobile */}
-      <nav style={{
+      <nav className="acct-mobile-nav" style={{
         position: "fixed", bottom: 0, left: 0, width: "100%",
         display: "flex", justifyContent: "space-around", alignItems: "center",
         padding: "10px 16px", background: "#ffffff", borderTop: "1px solid #E8E6E1", zIndex: 50,
@@ -247,6 +247,9 @@ export default function AccountPage() {
         </Link>
       </nav>
 
+      <style>{`
+        @media (min-width: 769px) { .acct-mobile-nav { display: none !important; } }
+      `}</style>
     </div>
   );
 }

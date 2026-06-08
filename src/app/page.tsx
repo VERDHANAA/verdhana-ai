@@ -216,7 +216,8 @@ function Navbar() {
           <button
             onClick={() => setMenuOpen(o => !o)}
             style={{ background: "none", border: "none", cursor: "pointer", padding: 6, display: "flex", flexDirection: "column", gap: 4 }}
-            aria-label="Menu">
+            aria-label="Menu"
+            aria-expanded={menuOpen}>
             {[0, 1, 2].map(i => (
               <span key={i} style={{ width: 20, height: 2, background: "#333", borderRadius: 2, display: "block",
                 transition: "transform 0.2s, opacity 0.2s",
