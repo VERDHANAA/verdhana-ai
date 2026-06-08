@@ -29,7 +29,8 @@ export async function POST(request: NextRequest) {
         "X-Content-Type-Options": "nosniff",
       },
     });
-  } catch {
+  } catch (err) {
+    console.error("[generate] error:", err);
     return NextResponse.json({ error: "Generation failed. Please try again." }, { status: 500 });
   }
 }
