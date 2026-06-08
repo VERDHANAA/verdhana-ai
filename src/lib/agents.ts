@@ -50,7 +50,7 @@ export async function generateStream(prompt: string, slug: string): Promise<Read
   const systemPrompt = systemPrompts[slug as SpecialistSlug] ?? `Kamu adalah AI marketing specialist. Bantu user dengan kebutuhan marketing mereka dalam Bahasa Indonesia.`;
 
   const stream = await client.chat.completions.create({
-    model: "google/gemini-2.0-flash-exp:free",
+    model: "google/gemma-4-31b-it:free",
     messages: [
       { role: "system", content: systemPrompt },
       { role: "user", content: prompt },
