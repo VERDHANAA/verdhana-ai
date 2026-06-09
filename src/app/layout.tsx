@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
-import { Space_Grotesk } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
 
-const spaceGrotesk = Space_Grotesk({
-  variable: "--font-space-grotesk",
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
 });
@@ -19,8 +19,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="id" className={`${spaceGrotesk.variable} h-full`}>
-      <body className="min-h-full flex flex-col bg-[#F9F6F0] text-[#37352F] antialiased" style={{ fontFamily: "var(--font-space-grotesk), system-ui, sans-serif" }}>
+    <html lang="id" className={`${inter.variable} h-full`}>
+      <body className="min-h-full flex flex-col bg-[#F9F6F0] text-[#37352F] antialiased" style={{ fontFamily: "var(--font-inter), system-ui, sans-serif" }}>
         {children}
       </body>
     </html>
