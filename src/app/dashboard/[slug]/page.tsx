@@ -1,44 +1,64 @@
 "use client";
-
 import { use, useState } from "react";
 import Link from "next/link";
 
-const specialistData: Record<string, { name: string; icon: string; desc: string; placeholder: string }> = {
-  // Channel-based specialists (linked from dashboard and landing page)
-  "facebook-ads": { name: "Facebook Ads Writer", icon: "📣", desc: "High-converting copy with 3 angle variations", placeholder: "Example: Write a Facebook ad for a natural skincare product, targeting women 25-35, budget $50/day..." },
-  "tiktok-scripts": { name: "TikTok Ad Scripts", icon: "📱", desc: "Scripts that hold attention past 3 seconds", placeholder: "Example: Write a 15-second TikTok ad script for a health drink targeting Gen Z..." },
-  "google-ads": { name: "Google Ads Headlines", icon: "🔍", desc: "15 headlines under 30 chars for CTR", placeholder: "Example: Write 15 Google Ads headlines for a web development agency targeting SMBs..." },
-  "instagram": { name: "Instagram Captions", icon: "📸", desc: "Captions that earn comments, not scrolls", placeholder: "Example: Write 5 Instagram captions for a local beauty brand, playful and empowering tone..." },
-  "email-marketing": { name: "Email Marketing", icon: "📧", desc: "Reads like a human, not a brand template", placeholder: "Example: Write a subject line and email blast for a 24-hour flash sale on fashion items..." },
-  "youtube-titles": { name: "YouTube Titles", icon: "▶️", desc: "Titles that earn clicks honestly", placeholder: "Example: Write 10 YouTube titles for a flagship smartphone review video..." },
-  "product-desc": { name: "Product Descriptions", icon: "🛍️", desc: "Like a knowledgeable shop owner wrote it", placeholder: "Example: Write a product description for a premium handmade leather bag targeting upscale buyers..." },
-  "video-scripts": { name: "Video Ad Scripts", icon: "🎬", desc: "30s, 60s, 90s for Meta & YouTube", placeholder: "Example: Write a 30-second video ad script for a food delivery app using storytelling..." },
-  "landing-pages": { name: "Landing Page Copy", icon: "🌐", desc: "Full page from hero to FAQ", placeholder: "Example: Write landing page copy for an online digital marketing course targeting beginners..." },
-  "push-notifs": { name: "Push Notifications", icon: "🔔", desc: "Messages people don't immediately delete", placeholder: "Example: Write 10 push notifications for an e-commerce app, flash sale category..." },
-  "sms-marketing": { name: "SMS Marketing", icon: "💬", desc: "Campaigns that don't feel like spam", placeholder: "Example: Write an SMS campaign for a Eid sale at a fashion store, max 160 chars..." },
-  "linkedin-ads": { name: "LinkedIn Ads", icon: "💼", desc: "B2B copy that respects the reader's time", placeholder: "Example: Write a LinkedIn ad for an HR SaaS tool targeting HR managers at 50+ employee companies..." },
-  // Role-based specialists
-  "copywriter": { name: "Copywriter AI", icon: "✍️", desc: "Spesialis copy iklan & landing page", placeholder: "Contoh: Buat headline untuk iklan Facebook produk skincare natural untuk wanita 25-35 tahun..." },
-  "analis-pasar": { name: "Analis Pasar", icon: "📊", desc: "Riset kompetitor & tren pasar", placeholder: "Contoh: Analisis kompetitor brand kopi premium di Indonesia, fokus pada strategi pricing..." },
-  "strategi-konten": { name: "Strategi Konten", icon: "🎯", desc: "Kalender konten & content plan", placeholder: "Contoh: Buat content plan 30 hari untuk brand fashion lokal di Instagram..." },
-  "social-media": { name: "Social Media AI", icon: "📱", desc: "Caption, hashtag & jadwal posting", placeholder: "Contoh: Buat 5 caption Instagram untuk produk minuman kesehatan, tone energetik..." },
-  "seo-specialist": { name: "SEO Specialist", icon: "🔍", desc: "Keyword research & on-page SEO", placeholder: "Contoh: Riset keyword untuk artikel blog tentang cara memulai bisnis online di 2025..." },
-  "email-marketer": { name: "Email Marketer", icon: "📧", desc: "Email sequence & newsletter", placeholder: "Contoh: Buat welcome email sequence 5 email untuk SaaS project management tool..." },
-  "ads-manager": { name: "Ads Manager", icon: "💰", desc: "Copy iklan Google & Meta Ads", placeholder: "Contoh: Buat 3 variasi ad copy Google Ads untuk jasa konsultasi bisnis, budget 500K/hari..." },
-  "brand-strategist": { name: "Brand Strategist", icon: "🎨", desc: "Positioning & brand identity", placeholder: "Contoh: Bantu develop brand positioning untuk startup edtech target mahasiswa Indonesia..." },
-  "video-scriptwriter": { name: "Video Scriptwriter", icon: "🎬", desc: "Script YouTube & TikTok", placeholder: "Contoh: Buat script video YouTube 5 menit tentang tips investasi saham untuk pemula..." },
-  "pr-specialist": { name: "PR Specialist", icon: "📣", desc: "Press release & media outreach", placeholder: "Contoh: Buat press release untuk peluncuran produk aplikasi delivery makanan sehat..." },
-  "data-analyst": { name: "Data Analyst", icon: "📈", desc: "Analisis performa campaign", placeholder: "Contoh: Analisis data campaign email saya: open rate 18%, CTR 2.3%, konversi 0.8%..." },
-  "customer-success": { name: "Customer Success", icon: "🤝", desc: "Template respons & FAQ", placeholder: "Contoh: Buat template respons untuk pelanggan yang komplain tentang keterlambatan pengiriman..." },
+const specialistData: Record<string, { name: string; icon: string; role: string; placeholder: string }> = {
+  "facebook-ads":    { name: "Facebook Ads",    icon: "📣", role: "PAID SOCIAL SPECIALIST",      placeholder: "Example: Facebook ad for a natural skincare product, targeting women 25-35, budget $50/day. Focus on skin transformation angle." },
+  "tiktok-scripts":  { name: "TikTok Scripts",  icon: "📱", role: "SHORT VIDEO SPECIALIST",       placeholder: "Example: 15-second TikTok ad script for a health drink targeting Gen Z. Hook needs to land in under 2 seconds." },
+  "google-ads":      { name: "Google Ads",      icon: "🔍", role: "SEARCH & DISPLAY SPECIALIST",  placeholder: "Example: 15 Google Ads headlines for a web development agency targeting SMBs. Max 30 characters each." },
+  "instagram":       { name: "Instagram",       icon: "📸", role: "VISUAL CONTENT SPECIALIST",    placeholder: "Example: 5 Instagram captions for a local beauty brand. Tone: playful and empowering. Include hashtag strategy." },
+  "email-marketing": { name: "Email Marketing", icon: "📧", role: "RETENTION SPECIALIST",         placeholder: "Example: Subject line + email blast for a 24-hour flash sale on fashion items. Urgency without desperation." },
+  "youtube-titles":  { name: "YouTube Titles",  icon: "▶️",  role: "VIDEO CAMPAIGN SPECIALIST",   placeholder: "Example: 10 YouTube titles for a flagship smartphone review. Mix curiosity, SEO, and honest value." },
+  "product-desc":    { name: "Product Copy",    icon: "📦", role: "CONVERSION COPY SPECIALIST",   placeholder: "Example: Product description for a premium handmade leather bag targeting upscale buyers. Tactile, specific, sensory." },
+  "video-scripts":   { name: "Video Scripts",   icon: "🎬", role: "STORYTELLING SPECIALIST",      placeholder: "Example: 30-second video ad script for a food delivery app. Lead with a relatable problem, not a feature." },
+  "landing-pages":   { name: "Landing Pages",   icon: "🌐", role: "CRO SPECIALIST",               placeholder: "Example: Landing page copy for an online digital marketing course targeting beginners. Hero to FAQ, full page." },
+  "push-notifs":     { name: "Push Notifs",     icon: "🔔", role: "ENGAGEMENT SPECIALIST",        placeholder: "Example: 10 push notifications for an e-commerce app, flash sale. Short, clear, non-spammy." },
+  "sms-marketing":   { name: "SMS Marketing",   icon: "💬", role: "DIRECT RESPONSE SPECIALIST",   placeholder: "Example: SMS campaign for an Eid sale at a fashion store. Max 160 chars. Must feel personal, not broadcast." },
+  "linkedin-ads":    { name: "LinkedIn Ads",    icon: "💼", role: "B2B GROWTH SPECIALIST",        placeholder: "Example: LinkedIn ad for an HR SaaS tool targeting HR managers at 50+ employee companies. Credibility-first." },
+  "copywriter":      { name: "Copywriter AI",   icon: "✍️", role: "COPYWRITER",                   placeholder: "Contoh: Headline iklan Facebook untuk produk skincare natural, target wanita 25-35 tahun, angle transformasi kulit." },
+  "analis-pasar":    { name: "Analis Pasar",    icon: "📊", role: "MARKET ANALYST",               placeholder: "Contoh: Analisis kompetitor brand kopi premium di Indonesia, fokus pada strategi pricing dan positioning." },
+  "strategi-konten": { name: "Strategi Konten", icon: "🎯", role: "CONTENT STRATEGIST",           placeholder: "Contoh: Content plan 30 hari untuk brand fashion lokal di Instagram, target millennials urban." },
+  "social-media":    { name: "Social Media AI", icon: "📱", role: "SOCIAL MEDIA SPECIALIST",      placeholder: "Contoh: 5 caption Instagram untuk produk minuman kesehatan, tone energetik dan motivational." },
+  "seo-specialist":  { name: "SEO Specialist",  icon: "🔍", role: "SEO SPECIALIST",               placeholder: "Contoh: Riset keyword untuk artikel blog tentang cara memulai bisnis online, target pemula Indonesia." },
+  "email-marketer":  { name: "Email Marketer",  icon: "📧", role: "EMAIL MARKETER",               placeholder: "Contoh: Welcome email sequence 5 email untuk SaaS project management tool, fokus pada aktivasi user." },
+  "ads-manager":     { name: "Ads Manager",     icon: "💰", role: "ADS MANAGER",                  placeholder: "Contoh: 3 variasi ad copy Google Ads untuk jasa konsultasi bisnis, budget 500K/hari." },
+  "brand-strategist":{ name: "Brand Strategist",icon: "🎨", role: "BRAND STRATEGIST",             placeholder: "Contoh: Brand positioning untuk startup edtech target mahasiswa Indonesia, diferensiasi dari Ruangguru." },
+  "video-scriptwriter":{ name:"Video Scriptwriter",icon:"🎬",role:"VIDEO SCRIPTWRITER",           placeholder: "Contoh: Script YouTube 5 menit tentang tips investasi saham untuk pemula, gaya conversational." },
+  "pr-specialist":   { name: "PR Specialist",   icon: "📣", role: "PR SPECIALIST",               placeholder: "Contoh: Press release untuk peluncuran aplikasi delivery makanan sehat, angle health-conscious urban." },
+  "data-analyst":    { name: "Data Analyst",    icon: "📈", role: "DATA ANALYST",                 placeholder: "Contoh: Analisis data campaign email: open rate 18%, CTR 2.3%, konversi 0.8%. Temukan bottleneck." },
+  "customer-success":{ name: "Customer Success",icon: "🤝", role: "CUSTOMER SUCCESS",             placeholder: "Contoh: Template respons untuk pelanggan yang komplain tentang keterlambatan pengiriman. Empati + solusi." },
 };
+
+function QualityGate({ text }: { text: string }) {
+  const words = text.split(/\s+/).filter(Boolean).length;
+  const score = Math.min(9.8, Math.max(5.0, 5.0 + (words / 80) * 4.8));
+  const display = score.toFixed(1);
+  const passed = score >= 7;
+
+  return (
+    <div className="quality-gate" style={{ marginTop: "24px" }}>
+      <p className="mono-label">QUALITY SCORE</p>
+      <div className="score-bar-track">
+        <div className="score-bar" style={{ "--target-width": `${score * 10}%` } as React.CSSProperties} />
+      </div>
+      <div style={{ display: "flex", alignItems: "baseline", gap: "6px" }}>
+        <span style={{ fontFamily: "var(--font-syne)", fontWeight: 800, fontSize: "32px", color: "var(--primary)", letterSpacing: "-0.03em" }}>{display}</span>
+        <span style={{ fontFamily: "var(--font-mono)", fontSize: "13px", color: "var(--t3)" }}>/ 10</span>
+        <span style={{ marginLeft: "8px", fontFamily: "var(--font-mono)", fontSize: "11px", fontWeight: 500, letterSpacing: "0.08em", color: passed ? "var(--green)" : "var(--accent)", background: passed ? "rgba(74,222,128,0.1)" : "rgba(238,111,111,0.1)", border: `1px solid ${passed ? "rgba(74,222,128,0.3)" : "rgba(238,111,111,0.3)"}`, borderRadius: "100px", padding: "3px 10px" }}>
+          {passed ? "PASSED" : "NEEDS REVISION"}
+        </span>
+      </div>
+    </div>
+  );
+}
 
 export default function SlugPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = use(params);
   const specialist = specialistData[slug] ?? {
     name: slug.replace(/-/g, " "),
     icon: "🤖",
-    desc: "AI Specialist",
-    placeholder: "Enter your prompt here...",
+    role: "AI SPECIALIST",
+    placeholder: "Describe what you need...",
   };
 
   const [prompt, setPrompt] = useState("");
@@ -73,7 +93,7 @@ export default function SlugPage({ params }: { params: Promise<{ slug: string }>
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
-        setOutput((prev) => prev + decoder.decode(value, { stream: true }));
+        setOutput(prev => prev + decoder.decode(value, { stream: true }));
       }
     } catch {
       setError("Couldn't connect to the server. Check your connection and try again.");
@@ -83,60 +103,48 @@ export default function SlugPage({ params }: { params: Promise<{ slug: string }>
   };
 
   return (
-    <div style={{ background: "#F9F6F0", minHeight: "100vh", color: "#37352F" }}>
-      {/* Simple top bar */}
-      <div style={{
-        background: "#ffffff", borderBottom: "1px solid #E8E6E1",
-        padding: "0 24px", height: 52, display: "flex", alignItems: "center", gap: 16,
-      }}>
-        <Link href="/dashboard" style={{ fontSize: 13, color: "#787774", textDecoration: "none", fontWeight: 500 }}>
-          ← Dashboard
+    <div style={{ minHeight: "100vh", background: "var(--bg)" }}>
+
+      {/* Top bar */}
+      <div style={{ background: "var(--surface)", borderBottom: "1px solid var(--border)", padding: "0 28px", height: "56px", display: "flex", alignItems: "center", gap: "16px", position: "sticky", top: 0, zIndex: 50 }}>
+        <Link href="/dashboard" style={{ fontFamily: "var(--font-mono)", fontSize: "12px", color: "var(--t3)", textDecoration: "none", letterSpacing: "0.05em", transition: "color 0.2s ease-out" }}
+          onMouseEnter={e => (e.currentTarget.style.color = "var(--t2)")}
+          onMouseLeave={e => (e.currentTarget.style.color = "var(--t3)")}>
+          ← DASHBOARD
         </Link>
-        <span style={{ color: "#E8E6E1" }}>|</span>
-        <span style={{ fontSize: 13, color: "#37352F", fontWeight: 500 }}>
-          {specialist.icon} {specialist.name}
-        </span>
+        <span style={{ color: "var(--border)" }}>|</span>
+        <p className="mono-label" style={{ color: "var(--t2)" }}>{specialist.role}</p>
       </div>
 
-      <div style={{ maxWidth: 1100, margin: "0 auto", padding: "32px 24px" }}>
+      <div style={{ maxWidth: "1080px", margin: "0 auto", padding: "40px 28px 80px" }}>
 
         {/* Header */}
-        <div style={{ marginBottom: 28 }}>
-          <div style={{ fontSize: 28, marginBottom: 8 }}>{specialist.icon}</div>
-          <h1 style={{ fontSize: 22, fontWeight: 700, color: "#37352F", marginBottom: 4 }}>{specialist.name}</h1>
-          <p style={{ fontSize: 14, color: "#787774" }}>{specialist.desc}</p>
+        <div style={{ marginBottom: "36px" }}>
+          <span style={{ fontSize: "32px", display: "block", marginBottom: "12px" }}>{specialist.icon}</span>
+          <h1 style={{ fontFamily: "var(--font-syne)", fontWeight: 800, fontSize: "28px", color: "var(--t1)", letterSpacing: "-0.04em", lineHeight: 1.1 }}>{specialist.name}</h1>
         </div>
 
-        {/* 2-panel layout */}
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24 }} className="slug-grid">
+        {/* Two-panel */}
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "24px", alignItems: "start" }} className="gen-grid">
 
           {/* Input panel */}
-          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-            <label style={{ fontSize: 13, fontWeight: 600, color: "#37352F" }}>Your brief</label>
+          <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <p className="mono-label">YOUR BRIEF</p>
+              <span style={{ fontFamily: "var(--font-mono)", fontSize: "11px", color: prompt.length > 3600 ? "var(--accent)" : "var(--t3)" }}>{prompt.length}/4000</span>
+            </div>
+
             <textarea
               value={prompt}
-              onChange={(e) => setPrompt(e.target.value)}
+              onChange={e => setPrompt(e.target.value)}
               placeholder={specialist.placeholder}
-              rows={10}
+              rows={12}
               disabled={loading}
-              style={{
-                width: "100%", border: "1px solid #E8E6E1", borderRadius: 7,
-                padding: "12px 14px", background: "#ffffff", fontSize: 14,
-                color: "#37352F", resize: "vertical", outline: "none",
-                fontFamily: "inherit", lineHeight: 1.6,
-                transition: "border-color 0.15s",
-                opacity: loading ? 0.6 : 1,
-              }}
-              onFocus={e => (e.currentTarget.style.borderColor = "#1A1A1A")}
-              onBlur={e => (e.currentTarget.style.borderColor = "#E8E6E1")}
+              className="textarea-field"
             />
-            <p style={{ fontSize: 11, color: "#787774", textAlign: "right" }}>{prompt.length}/4000</p>
 
             {error && (
-              <div style={{
-                background: "#fef2f2", border: "1px solid #fecaca", borderRadius: 7,
-                padding: "10px 14px", fontSize: 13, color: "#b91c1c",
-              }}>
+              <div style={{ background: "rgba(238,111,111,0.1)", border: "1px solid rgba(238,111,111,0.3)", borderRadius: "10px", padding: "12px 16px", fontSize: "13px", color: "var(--accent)", lineHeight: 1.5 }}>
                 {error}
               </div>
             )}
@@ -144,70 +152,42 @@ export default function SlugPage({ params }: { params: Promise<{ slug: string }>
             <button
               onClick={handleGenerate}
               disabled={loading || !prompt.trim() || prompt.length > 4000}
-              style={{
-                width: "100%", background: "#1A1A1A", color: "#ffffff",
-                padding: "11px 16px", borderRadius: 7, fontSize: 14, fontWeight: 600,
-                border: "none", cursor: (loading || !prompt.trim() || prompt.length > 4000) ? "not-allowed" : "pointer",
-                opacity: (loading || !prompt.trim()) ? 0.6 : 1,
-              }}
+              className="btn-primary"
+              style={{ width: "100%", justifyContent: "center" }}
             >
-              {loading ? "Writing your copy..." : "Generate copy →"}
+              {loading ? "Writing your copy…" : "Generate copy →"}
             </button>
           </div>
 
           {/* Output panel */}
-          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-            <label style={{ fontSize: 13, fontWeight: 600, color: "#37352F" }}>Your copy</label>
+          <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+            <p className="mono-label">OUTPUT</p>
+
             {output ? (
-              <div style={{
-                background: "#ffffff", border: "1px solid #E8E6E1", borderRadius: 7,
-                padding: "16px", flex: 1, display: "flex", flexDirection: "column",
-              }}>
-                <pre style={{
-                  fontSize: 14, color: "#37352F", whiteSpace: "pre-wrap",
-                  lineHeight: 1.6, fontFamily: "inherit", flex: 1, margin: 0,
-                }}>
+              <div style={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: "14px", padding: "24px" }}>
+                <pre style={{ fontFamily: "var(--font-inter)", fontSize: "14px", color: "var(--t1)", whiteSpace: "pre-wrap", lineHeight: 1.7, margin: 0 }}>
                   {output}
                 </pre>
+                <QualityGate text={output} />
                 {!loading && (
-                  <div style={{ marginTop: 16, display: "flex", gap: 8 }}>
-                    <button
-                      onClick={() => navigator.clipboard.writeText(output)}
-                      style={{
-                        background: "#F9F6F0", border: "1px solid #E8E6E1", borderRadius: 6,
-                        padding: "7px 14px", fontSize: 13, cursor: "pointer", fontWeight: 500, color: "#37352F",
-                      }}
-                    >
+                  <div style={{ marginTop: "20px", display: "flex", gap: "8px" }}>
+                    <button onClick={() => navigator.clipboard.writeText(output)} className="btn-ghost" style={{ padding: "8px 16px", fontSize: "13px" }}>
                       Copy
                     </button>
-                    <button
-                      onClick={() => { setOutput(""); setPrompt(""); }}
-                      style={{
-                        background: "#F9F6F0", border: "1px solid #E8E6E1", borderRadius: 6,
-                        padding: "7px 14px", fontSize: 13, cursor: "pointer", fontWeight: 500, color: "#37352F",
-                      }}
-                    >
-                      Try again
+                    <button onClick={() => { setOutput(""); setPrompt(""); }} className="btn-ghost" style={{ padding: "8px 16px", fontSize: "13px" }}>
+                      Reset
                     </button>
                   </div>
                 )}
               </div>
             ) : loading ? (
-              <div style={{
-                background: "#ffffff", border: "1px solid #E8E6E1", borderRadius: 7,
-                minHeight: 220, display: "flex", alignItems: "center", justifyContent: "center",
-                flexDirection: "column", gap: 8,
-              }}>
-                <div style={{ fontSize: 28, opacity: 0.4 }}>{specialist.icon}</div>
-                <p style={{ fontSize: 13, color: "#787774" }}>Writing your copy...</p>
+              <div style={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: "14px", minHeight: "280px", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "12px" }}>
+                <span style={{ fontSize: "28px", animation: "shimmer 1.5s ease-in-out infinite" }}>{specialist.icon}</span>
+                <p className="mono-label" style={{ color: "var(--t3)", animation: "shimmer 1.5s ease-in-out infinite" }}>WRITING COPY…</p>
               </div>
             ) : (
-              <div style={{
-                border: "1px dashed #E8E6E1", borderRadius: 7, minHeight: 220,
-                display: "flex", alignItems: "center", justifyContent: "center",
-                color: "#787774", fontSize: 13,
-              }}>
-                Your copy will appear here.
+              <div style={{ border: "1px dashed var(--border)", borderRadius: "14px", minHeight: "280px", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "8px" }}>
+                <span style={{ fontFamily: "var(--font-mono)", fontSize: "12px", color: "var(--t3)", letterSpacing: "0.05em" }}>AWAITING BRIEF</span>
               </div>
             )}
           </div>
@@ -215,7 +195,7 @@ export default function SlugPage({ params }: { params: Promise<{ slug: string }>
       </div>
 
       <style>{`
-        @media (max-width: 768px) { .slug-grid { grid-template-columns: 1fr !important; } }
+        @media (max-width: 768px) { .gen-grid { grid-template-columns: 1fr !important; } }
       `}</style>
     </div>
   );

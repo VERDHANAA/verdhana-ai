@@ -5,18 +5,18 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 const SPECIALISTS = [
-  { slug: "facebook-ads",    icon: "📣", name: "Facebook Ads",    desc: "High-converting copy with 3 angle variations" },
-  { slug: "tiktok-scripts",  icon: "📱", name: "TikTok Scripts",  desc: "Scripts that hold attention past 3 seconds" },
-  { slug: "google-ads",      icon: "🔍", name: "Google Ads",      desc: "15 headlines under 30 chars for CTR" },
-  { slug: "instagram",       icon: "📸", name: "Instagram",       desc: "Captions that earn comments, not scrolls" },
-  { slug: "email-marketing", icon: "📧", name: "Email Marketing", desc: "Reads like a human, not a brand template" },
-  { slug: "youtube-titles",  icon: "▶️", name: "YouTube Titles",  desc: "Titles that earn clicks honestly" },
-  { slug: "product-desc",    icon: "📦", name: "Product Desc.",   desc: "Like a knowledgeable shop owner wrote it" },
-  { slug: "video-scripts",   icon: "🎬", name: "Video Scripts",   desc: "30s, 60s, 90s for Meta & YouTube" },
-  { slug: "landing-pages",   icon: "🌐", name: "Landing Pages",   desc: "Full page from hero to FAQ" },
-  { slug: "push-notifs",     icon: "🔔", name: "Push Notifs",     desc: "Messages people don't immediately delete" },
-  { slug: "sms-marketing",   icon: "💬", name: "SMS Marketing",   desc: "Campaigns that don't feel like spam" },
-  { slug: "linkedin-ads",    icon: "💼", name: "LinkedIn Ads",    desc: "B2B copy that respects the reader's time" },
+  { slug: "facebook-ads",    icon: "📣", name: "Facebook Ads",    role: "PAID SOCIAL",      desc: "High-converting copy with 3 angle variations." },
+  { slug: "tiktok-scripts",  icon: "📱", name: "TikTok Scripts",  role: "SHORT VIDEO",       desc: "Scripts engineered to hold attention past 3 seconds." },
+  { slug: "google-ads",      icon: "🔍", name: "Google Ads",      role: "SEARCH & DISPLAY",  desc: "15 headlines under 30 characters — built for CTR." },
+  { slug: "instagram",       icon: "📸", name: "Instagram",       role: "VISUAL CONTENT",    desc: "Captions that earn comments, not scrolls." },
+  { slug: "email-marketing", icon: "📧", name: "Email Marketing", role: "RETENTION",         desc: "Reads like a human wrote it, not a brand template." },
+  { slug: "youtube-titles",  icon: "▶️",  name: "YouTube Titles", role: "VIDEO CAMPAIGN",    desc: "Titles that earn clicks honestly." },
+  { slug: "product-desc",    icon: "📦", name: "Product Copy",    role: "CONVERSION COPY",   desc: "Like a knowledgeable shop owner wrote every word." },
+  { slug: "video-scripts",   icon: "🎬", name: "Video Scripts",   role: "STORYTELLING",      desc: "30s, 60s, 90s formats for Meta & YouTube." },
+  { slug: "landing-pages",   icon: "🌐", name: "Landing Pages",   role: "CRO",               desc: "Full page from hero to FAQ — ready to publish." },
+  { slug: "push-notifs",     icon: "🔔", name: "Push Notifs",     role: "ENGAGEMENT",        desc: "Messages people don't immediately dismiss." },
+  { slug: "sms-marketing",   icon: "💬", name: "SMS Marketing",   role: "DIRECT RESPONSE",   desc: "Campaigns that convert without feeling like spam." },
+  { slug: "linkedin-ads",    icon: "💼", name: "LinkedIn Ads",    role: "B2B GROWTH",        desc: "B2B copy that respects the reader's time." },
 ];
 
 export default function DashboardPage() {
@@ -25,18 +25,12 @@ export default function DashboardPage() {
   const [quota, setQuota] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    checkAuth();
-    fetchQuota();
-  }, []);
+  useEffect(() => { init(); }, []);
 
-  async function checkAuth() {
+  async function init() {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) { router.push("/login"); return; }
     setLoading(false);
-  }
-
-  async function fetchQuota() {
     try {
       const res = await fetch("/api/usage");
       const data = await res.json();
@@ -49,129 +43,103 @@ export default function DashboardPage() {
     router.push("/");
   }
 
-  if (loading) return (
-    <div style={{ background: "#F9F6F0", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
-      <div style={{ fontSize: 14, color: "#787774" }}>Loading...</div>
-    </div>
-  );
+  if (loading) {
+    return (
+      <div style={{ minHeight: "100vh", background: "var(--bg)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "12px" }}>
+          <div style={{ width: "32px", height: "32px", border: "2px solid var(--border)", borderTopColor: "var(--primary)", borderRadius: "100px", animation: "spin 0.8s linear infinite" }} />
+          <p className="mono-label">LOADING</p>
+        </div>
+        <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+      </div>
+    );
+  }
 
   return (
-    <div style={{ background: "#F9F6F0", minHeight: "100vh", color: "#37352F" }}>
+    <div style={{ minHeight: "100vh", background: "var(--bg)", display: "flex" }}>
 
-      {/* NAV */}
-      <header style={{
-        width: "100%", position: "sticky", top: 0, zIndex: 50,
-        background: "#ffffff", borderBottom: "1px solid #E8E6E1",
-      }}>
-        <div style={{
-          display: "flex", justifyContent: "space-between", alignItems: "center",
-          padding: "0 24px", height: 60, maxWidth: 1200, margin: "0 auto",
-        }}>
-          <Link href="/" style={{ textDecoration: "none", color: "#37352F", fontWeight: 700, fontSize: 16 }}>
-            Verdhana AI
+      {/* Sidebar */}
+      <aside style={{ width: "220px", flexShrink: 0, background: "rgba(0,0,0,0.25)", borderRight: "1px solid var(--border)", padding: "24px 16px", display: "flex", flexDirection: "column", position: "fixed", top: 0, left: 0, bottom: 0, overflowY: "auto" }} className="desktop-only">
+        <div style={{ display: "flex", alignItems: "center", gap: "8px", padding: "0 12px", marginBottom: "32px" }}>
+          <Link href="/" style={{ fontFamily: "var(--font-syne)", fontWeight: 800, fontSize: "16px", color: "var(--t1)", textDecoration: "none", letterSpacing: "-0.02em" }}>Verdhana AI</Link>
+          <span style={{ width: "6px", height: "6px", borderRadius: "100px", background: "var(--primary)", animation: "pulseDot 2s ease-in-out infinite", flexShrink: 0 }} />
+        </div>
+
+        <div style={{ display: "flex", flexDirection: "column", gap: "4px", flex: 1 }}>
+          <p className="mono-label" style={{ padding: "0 12px", marginBottom: "8px" }}>TOOLS</p>
+          <Link href="/dashboard" className="sidebar-item active">
+            <span>⚡</span> All Specialists
           </Link>
-          <nav style={{ display: "flex", gap: 24, alignItems: "center" }}>
-            <Link href="/dashboard" style={{ fontSize: 14, color: "#37352F", textDecoration: "none", fontWeight: 600, borderBottom: "2px solid #37352F", paddingBottom: 2 }}>Tools</Link>
-            <Link href="/history" style={{ fontSize: 14, color: "#787774", textDecoration: "none", fontWeight: 500 }}>History</Link>
-            <Link href="/account" style={{ fontSize: 14, color: "#787774", textDecoration: "none", fontWeight: 500 }}>Account</Link>
-          </nav>
-          <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
-            <span style={{
-              background: "#F9F6F0", border: "1px solid #E8E6E1", borderRadius: 6,
-              padding: "4px 10px", fontSize: 13, color: "#787774", fontWeight: 500,
-            }}>
-              {quota !== null ? `${quota}/10 left` : "…"}
-            </span>
-            <button
-              onClick={handleSignOut}
-              style={{
-                background: "none", border: "1px solid #E8E6E1", borderRadius: 6,
-                padding: "5px 14px", fontSize: 13, color: "#787774", cursor: "pointer", fontWeight: 500,
-              }}
-            >
-              Sign out
-            </button>
+          <Link href="/history" className="sidebar-item">
+            <span>📋</span> History
+          </Link>
+          <Link href="/account" className="sidebar-item">
+            <span>👤</span> Account
+          </Link>
+        </div>
+
+        <div style={{ borderTop: "1px solid var(--border)", paddingTop: "16px", display: "flex", flexDirection: "column", gap: "8px" }}>
+          <div style={{ background: "var(--primary-dim)", border: "1px solid rgba(123,111,238,0.2)", borderRadius: "10px", padding: "12px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+            <span className="mono-label" style={{ color: "var(--t2)" }}>DAILY</span>
+            <span style={{ fontFamily: "var(--font-mono)", fontSize: "13px", color: "var(--primary)", fontWeight: 500 }}>{quota ?? "…"}<span style={{ color: "var(--t3)" }}>/10</span></span>
+          </div>
+          <button onClick={handleSignOut} className="btn-ghost" style={{ width: "100%", justifyContent: "center", padding: "8px 16px", fontSize: "13px" }}>
+            Sign out
+          </button>
+        </div>
+      </aside>
+
+      {/* Main */}
+      <main style={{ flex: 1, marginLeft: "220px", padding: "40px 40px 80px" }} className="desktop-main">
+        <div style={{ maxWidth: "1040px" }}>
+          <div style={{ marginBottom: "36px" }}>
+            <p className="mono-label" style={{ marginBottom: "12px" }}>12 SPECIALISTS</p>
+            <h1 style={{ fontFamily: "var(--font-syne)", fontWeight: 800, fontSize: "clamp(28px, 4vw, 40px)", color: "var(--t1)", letterSpacing: "-0.04em", lineHeight: 1.1, marginBottom: "12px" }}>
+              Your marketing team.
+            </h1>
+            <p style={{ fontSize: "15px", color: "var(--t2)", maxWidth: "480px" }}>
+              Each specialist is trained for one channel. Pick one, write a brief, get copy — in seconds.
+            </p>
+          </div>
+
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "16px" }} className="specialists-grid">
+            {SPECIALISTS.map((sp) => (
+              <Link key={sp.slug} href={`/dashboard/${sp.slug}`} className="specialist-card">
+                <div style={{ marginBottom: "4px" }}>
+                  <p className="mono-label">{sp.role}</p>
+                </div>
+                <div style={{ fontSize: "24px", marginBottom: "8px" }}>{sp.icon}</div>
+                <h3 style={{ fontSize: "15px", fontWeight: 600, color: "var(--t1)", marginBottom: "6px" }}>{sp.name}</h3>
+                <p style={{ fontSize: "13px", color: "var(--t2)", lineHeight: 1.5, flex: 1 }}>{sp.desc}</p>
+                <div style={{ marginTop: "16px", fontSize: "12px", color: "var(--primary)", fontWeight: 500 }}>Open →</div>
+              </Link>
+            ))}
           </div>
         </div>
-      </header>
-
-      {/* MAIN */}
-      <main style={{ maxWidth: 1200, margin: "0 auto", padding: "40px 24px 96px" }}>
-
-        {/* Hero */}
-        <div style={{ marginBottom: 40 }}>
-          <h1 style={{ fontSize: "clamp(28px, 4vw, 44px)", fontWeight: 700, color: "#37352F", marginBottom: 8, letterSpacing: "-0.02em" }}>
-            Your specialists
-          </h1>
-          <p style={{ fontSize: 15, color: "#787774" }}>
-            12 AI tools trained for high-impact marketing copy. Pick one and start writing.
-          </p>
-        </div>
-
-        {/* Specialists Grid */}
-        <div
-          style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 12, marginBottom: 48 }}
-          className="dash-grid"
-        >
-          {SPECIALISTS.map((sp) => (
-            <Link
-              key={sp.slug}
-              href={`/dashboard/${sp.slug}`}
-              style={{
-                display: "flex", flexDirection: "column", textDecoration: "none", color: "#37352F",
-                background: "#ffffff", border: "1px solid #E8E6E1", borderRadius: 8,
-                padding: 20, transition: "background 0.15s",
-              }}
-              onMouseEnter={e => (e.currentTarget.style.background = "#F0EDE8")}
-              onMouseLeave={e => (e.currentTarget.style.background = "#ffffff")}
-            >
-              <div style={{ fontSize: 28, marginBottom: 12 }}>{sp.icon}</div>
-              <div style={{ fontSize: 14, fontWeight: 600, marginBottom: 6, color: "#37352F" }}>{sp.name}</div>
-              <div style={{ fontSize: 12, color: "#787774", lineHeight: 1.5, flex: 1 }}>{sp.desc}</div>
-              <div style={{
-                marginTop: 16, fontSize: 12, fontWeight: 600, color: "#1A1A1A",
-                display: "flex", alignItems: "center", gap: 4,
-              }}>
-                Open →
-              </div>
-            </Link>
-          ))}
-        </div>
-
       </main>
 
-      {/* Bottom nav mobile */}
-      <nav style={{
-        position: "fixed", bottom: 0, left: 0, width: "100%",
-        display: "flex", justifyContent: "space-around", alignItems: "center",
-        padding: "10px 16px", background: "#ffffff", borderTop: "1px solid #E8E6E1", zIndex: 50,
-      }}>
-        <Link href="/dashboard" style={{
-          display: "flex", flexDirection: "column", alignItems: "center",
-          color: "#37352F", textDecoration: "none", padding: "6px 12px", fontSize: 11, fontWeight: 600,
-        }}>
-          <span style={{ fontSize: 20, marginBottom: 2 }}>🛠</span>
-          Tools
-        </Link>
-        <Link href="/history" style={{
-          display: "flex", flexDirection: "column", alignItems: "center",
-          color: "#787774", textDecoration: "none", padding: "6px 12px", fontSize: 11, fontWeight: 500,
-        }}>
-          <span style={{ fontSize: 20, marginBottom: 2 }}>📋</span>
-          History
-        </Link>
-        <Link href="/account" style={{
-          display: "flex", flexDirection: "column", alignItems: "center",
-          color: "#787774", textDecoration: "none", padding: "6px 12px", fontSize: 11, fontWeight: 500,
-        }}>
-          <span style={{ fontSize: 20, marginBottom: 2 }}>👤</span>
-          Account
-        </Link>
+      {/* Mobile bottom nav */}
+      <nav className="mobile-sidebar" style={{ position: "fixed", bottom: 0, left: 0, right: 0, background: "var(--surface)", borderTop: "1px solid var(--border)", display: "none", justifyContent: "space-around", padding: "12px 0 20px", zIndex: 50 }}>
+        {[
+          { href: "/dashboard", icon: "⚡", label: "Tools" },
+          { href: "/history",   icon: "📋", label: "History" },
+          { href: "/account",   icon: "👤", label: "Account" },
+        ].map(item => (
+          <Link key={item.href} href={item.href} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "4px", textDecoration: "none", color: "var(--t2)", fontSize: "11px", fontFamily: "var(--font-mono)" }}>
+            <span style={{ fontSize: "18px" }}>{item.icon}</span>
+            {item.label}
+          </Link>
+        ))}
       </nav>
 
       <style>{`
-        @media (max-width: 900px) { .dash-grid { grid-template-columns: repeat(3, 1fr) !important; } }
-        @media (max-width: 640px) { .dash-grid { grid-template-columns: repeat(2, 1fr) !important; } }
+        @media (max-width: 768px) {
+          .desktop-main { margin-left: 0 !important; padding: 24px 20px 100px !important; }
+          .specialists-grid { grid-template-columns: repeat(2, 1fr) !important; }
+        }
+        @media (max-width: 480px) {
+          .specialists-grid { grid-template-columns: 1fr !important; }
+        }
       `}</style>
     </div>
   );
