@@ -11,32 +11,14 @@ export default function SignupPage() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [done, setDone] = useState(false);
 
   async function handleSignup(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
     setError("");
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: { emailRedirectTo: `${location.origin}/auth/callback` },
-    });
+    const { error } = await supabase.auth.signUp({ email, password });
     if (error) { setError(error.message); setLoading(false); return; }
-    setDone(true);
-    setLoading(false);
-  }
-
-  if (done) {
-    return (
-      <div style={{ minHeight: "100vh", background: "var(--bg)", display: "flex", alignItems: "center", justifyContent: "center", padding: "48px 24px" }}>
-        <div style={{ width: "100%", maxWidth: "400px", background: "var(--surface)", border: "1px solid var(--border)", borderRadius: "14px", padding: "36px", textAlign: "center" }}>
-          <div style={{ width: "48px", height: "48px", background: "rgba(74,222,128,0.12)", border: "1px solid rgba(74,222,128,0.3)", borderRadius: "100px", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 20px", fontSize: "20px" }}>✓</div>
-          <h2 style={{ fontFamily: "var(--font-syne)", fontWeight: 800, fontSize: "22px", color: "var(--t1)", marginBottom: "12px", letterSpacing: "-0.03em" }}>Check your email</h2>
-          <p style={{ fontSize: "14px", color: "var(--t2)", lineHeight: 1.6 }}>We sent a confirmation link to <strong style={{ color: "var(--t1)" }}>{email}</strong>. Click it to activate your account.</p>
-        </div>
-      </div>
-    );
+    router.push("/dashboard");
   }
 
   return (
