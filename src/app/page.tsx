@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 
 const SPECIALISTS = [
@@ -194,16 +194,16 @@ export default function LandingPage() {
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px", maxWidth: "720px" }} className="compare-grid">
           <div style={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: "14px", padding: "28px" }}>
             <p style={{ fontFamily: "var(--font-mono)", fontSize: "11px", fontWeight: 500, letterSpacing: "0.08em", color: "var(--t3)", marginBottom: "20px" }}>STANDARD AI</p>
-            {["Unleash your potential today", "Transform your business in 2025", "In today's fast-paced world…"].map((t, i) => (
-              <div key={i} style={{ display: "flex", gap: "10px", marginBottom: "12px", fontSize: "14px", color: "var(--t3)", textDecoration: "line-through" }}>
+            {["Unleash your potential today", "Transform your business in 2025", "In today's fast-paced world…"].map((t) => (
+              <div key={t} style={{ display: "flex", gap: "10px", marginBottom: "12px", fontSize: "14px", color: "var(--t3)", textDecoration: "line-through" }}>
                 <span style={{ color: "var(--accent)", flexShrink: 0 }}>✕</span>{t}
               </div>
             ))}
           </div>
           <div style={{ background: "var(--primary-dim)", border: "1px solid rgba(123,111,238,0.2)", borderRadius: "14px", padding: "28px" }}>
             <p style={{ fontFamily: "var(--font-mono)", fontSize: "11px", fontWeight: 500, letterSpacing: "0.08em", color: "var(--primary)", marginBottom: "20px" }}>VERDHANA AI</p>
-            {["Specific observational openers", "Real numbers: 47%, 73%, 1,247", "Calm confidence, no hype"].map((t, i) => (
-              <div key={i} style={{ display: "flex", gap: "10px", marginBottom: "12px", fontSize: "14px", color: "var(--t1)", fontWeight: 500 }}>
+            {["Specific observational openers", "Real numbers: 47%, 73%, 1,247", "Calm confidence, no hype"].map((t) => (
+              <div key={t} style={{ display: "flex", gap: "10px", marginBottom: "12px", fontSize: "14px", color: "var(--t1)", fontWeight: 500 }}>
                 <span style={{ color: "var(--green)", flexShrink: 0 }}>→</span>{t}
               </div>
             ))}
@@ -219,7 +219,7 @@ export default function LandingPage() {
 
           <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
             {FAQS.map((faq, i) => (
-              <div key={i} style={{ border: "1px solid var(--border)", borderRadius: "10px", overflow: "hidden", background: "var(--surface-2)" }}>
+              <div key={faq.q} style={{ border: "1px solid var(--border)", borderRadius: "10px", overflow: "hidden", background: "var(--surface-2)" }}>
                 <button onClick={() => setOpenFaq(openFaq === i ? null : i)} style={{ width: "100%", padding: "18px 20px", display: "flex", justifyContent: "space-between", alignItems: "center", background: "transparent", border: "none", cursor: "pointer", textAlign: "left" }}>
                   <span style={{ fontSize: "15px", fontWeight: 500, color: "var(--t1)" }}>{faq.q}</span>
                   <span style={{ color: "var(--t3)", fontSize: "18px", transform: openFaq === i ? "rotate(180deg)" : "none", transition: "transform 0.2s ease-out", flexShrink: 0, marginLeft: "16px" }}>›</span>
@@ -271,6 +271,9 @@ export default function LandingPage() {
         }
         @media (max-width: 480px) {
           .spec-grid { grid-template-columns: repeat(2, 1fr) !important; }
+        }
+        @media (max-width: 360px) {
+          .spec-grid { grid-template-columns: 1fr !important; }
         }
       `}</style>
     </div>

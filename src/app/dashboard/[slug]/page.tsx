@@ -196,6 +196,7 @@ export default function SlugPage({ params }: { params: Promise<{ slug: string }>
 
       <style>{`
         @media (max-width: 768px) { .gen-grid { grid-template-columns: 1fr !important; } }
+        @media (max-width: 480px) { .gen-grid { gap: 16px !important; } }
       `}</style>
     </div>
   );
