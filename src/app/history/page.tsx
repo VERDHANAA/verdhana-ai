@@ -65,7 +65,7 @@ export default function HistoryPage() {
           <Link href="/" style={{ textDecoration: "none", color: "#37352F", fontWeight: 700, fontSize: 16 }}>
             Verdhana AI
           </Link>
-          <nav style={{ display: "flex", gap: 24, alignItems: "center" }}>
+          <nav className="hist-desktop-nav" style={{ display: "flex", gap: 24, alignItems: "center" }}>
             <Link href="/dashboard" style={{ fontSize: 14, color: "#787774", textDecoration: "none", fontWeight: 500 }}>Tools</Link>
             <Link href="/history" style={{ fontSize: 14, color: "#37352F", textDecoration: "none", fontWeight: 600, borderBottom: "2px solid #37352F", paddingBottom: 2 }}>History</Link>
             <Link href="/account" style={{ fontSize: 14, color: "#787774", textDecoration: "none", fontWeight: 500 }}>Account</Link>
@@ -271,6 +271,7 @@ export default function HistoryPage() {
 
       <style>{`
         @media (min-width: 769px) { .hist-mobile-nav { display: none !important; } }
+        @media (max-width: 768px) { .hist-desktop-nav { display: none !important; } }
       `}</style>
     </div>
   );

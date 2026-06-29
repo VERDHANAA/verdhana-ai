@@ -60,7 +60,7 @@ function Navbar() {
         </Link>
 
         <nav style={{ display: "flex", alignItems: "center", gap: "32px" }} className="desktop-only">
-          {["Features", "Specialists", "Pricing"].map(l => (
+          {["Features", "Specialists"].map(l => (
             <a key={l} href={`#${l.toLowerCase()}`} className="nav-link">{l}</a>
           ))}
         </nav>
@@ -77,7 +77,7 @@ function Navbar() {
 
       {open && (
         <div style={{ background: "var(--surface)", borderTop: "1px solid var(--border)", padding: "16px 24px 24px" }} className="mobile-only">
-          {["Features", "Specialists", "Pricing"].map(l => (
+          {["Features", "Specialists"].map(l => (
             <a key={l} href={`#${l.toLowerCase()}`} onClick={() => setOpen(false)} style={{ display: "block", padding: "12px 0", fontSize: "15px", color: "var(--t2)", textDecoration: "none", borderBottom: "1px solid var(--border)" }}>{l}</a>
           ))}
           <div style={{ display: "flex", gap: "12px", marginTop: "16px" }}>
